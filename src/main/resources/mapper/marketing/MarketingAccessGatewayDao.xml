@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.MarketingAccessGatewayDao">
+  <resultMap id="BaseResultMap" type="com.hui10.app.model.marketing.MarketingAccessGateway">
+    <id column="gatewayid" jdbcType="VARCHAR" property="gatewayid" />
+    <result column="gatewaycode" jdbcType="VARCHAR" property="gatewaycode" />
+    <result column="gatewayname" jdbcType="VARCHAR" property="gatewayname" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    gatewayid, gatewaycode, gatewayname
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing_access_gateway
+    where gatewayid = #{gatewayid,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insert" parameterType="com.hui10.app.model.marketing.MarketingAccessGateway">
+    insert into hui_app_marketing_access_gateway (gatewayid, gatewaycode, gatewayname
+      )
+    values (#{gatewayid,jdbcType=INTEGER}, #{gatewaycode,jdbcType=VARCHAR}, #{gatewayname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hui10.app.model.marketing.MarketingAccessGateway">
+    insert into hui_app_marketing_access_gateway
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gatewayid != null">
+        gatewayid,
+      </if>
+      <if test="gatewaycode != null">
+        gatewaycode,
+      </if>
+      <if test="gatewayname != null">
+        gatewayname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gatewayid != null">
+        #{gatewayid,jdbcType=INTEGER},
+      </if>
+      <if test="gatewaycode != null">
+        #{gatewaycode,jdbcType=VARCHAR},
+      </if>
+      <if test="gatewayname != null">
+        #{gatewayname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hui10.app.model.marketing.MarketingAccessGateway">
+    update hui_app_marketing_access_gateway
+    <set>
+      <if test="gatewaycode != null">
+        gatewaycode = #{gatewaycode,jdbcType=VARCHAR},
+      </if>
+      <if test="gatewayname != null">
+        gatewayname = #{gatewayname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where gatewayid = #{gatewayid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hui10.app.model.marketing.MarketingAccessGateway">
+    update hui_app_marketing_access_gateway
+    set gatewaycode = #{gatewaycode,jdbcType=VARCHAR},
+      gatewayname = #{gatewayname,jdbcType=VARCHAR}
+    where gatewayid = #{gatewayid,jdbcType=INTEGER}
+  </update>
+  
+   <select id="selectByIds"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing_access_gateway
+    where gatewayid in(
+    <foreach collection="list" item="item" separator=",">
+    #{item,jdbcType=INTEGER}
+    </foreach>
+    ) 
+  </select>
+  
+</mapper>

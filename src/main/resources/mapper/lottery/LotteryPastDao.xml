@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.lottery.LotteryPastDao">
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.lottery.LotteryPast">
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="issuenumber" jdbcType="VARCHAR" property="issuenumber" />
+		<result column="lotterytime" jdbcType="TIMESTAMP" property="lotterytime" />
+		<result column="lotteryendtime" jdbcType="TIMESTAMP" property="lotteryendtime" />
+		<result column="lotterynumber" jdbcType="VARCHAR" property="lotterynumber" />
+		<result column="lotterytype" jdbcType="VARCHAR" property="lotterytype" />
+		<result column="moneypool" jdbcType="VARCHAR" property="moneypool" />
+		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, issuenumber, lotterytime,lotteryendtime, lotterynumber, lotterytype, moneypool, createtime
+	</sql>
+
+	<select id="queryPast" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from  hui_app_lottery_past 
+		where 1=1 
+		<if test="id != null">
+			<![CDATA[ and id < #{id} ]]>
+		</if>
+		<if test="lotterytype != null">
+				and lotterytype = #{lotterytype}
+		</if>
+		order by id desc LIMIT 15;
+	</select>
+
+	<insert id="insertLotterPast" parameterType="com.hui10.app.model.lottery.LotteryPast">
+		insert into hui_app_lottery_past
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="issuenumber != null">
+				issuenumber,
+			</if>
+			<if test="lotterytime != null">
+				lotterytime,
+			</if>
+			<if test="lotteryendtime != null">
+				lotteryendtime,
+			</if>
+			<if test="lotterynumber != null">
+				lotterynumber,
+			</if>
+			<if test="lotterytype != null">
+				lotterytype,
+			</if>
+			<if test="moneypool != null">
+				moneypool,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="issuenumber != null">
+				#{issuenumber,jdbcType=VARCHAR},
+			</if>
+			<if test="lotterytime != null">
+				#{lotterytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lotteryendtime != null">
+				#{lotteryendtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lotterynumber != null">
+				#{lotterynumber,jdbcType=VARCHAR},
+			</if>
+			<if test="lotterytype != null">
+				#{lotterytype,jdbcType=VARCHAR},
+			</if>
+			<if test="moneypool != null">
+				#{moneypool,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+</mapper>

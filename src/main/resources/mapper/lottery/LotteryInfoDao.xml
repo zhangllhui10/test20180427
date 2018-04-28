@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.lottery.LotteryInfoDao">
+  <resultMap id="BaseResultMap" type="com.hui10.app.model.lottery.LotteryInfo">
+    <id column="lotterycode" jdbcType="VARCHAR" property="lotterycode" />
+    <result column="lotteryname" jdbcType="VARCHAR" property="lotteryname" />
+    <result column="lotteryicon" jdbcType="VARCHAR" property="lotteryicon" />
+    <result column="price" jdbcType="BIGINT" property="price" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    lotterycode, lotteryname, lotteryicon, price, createtime, creater, modifytime, modifier
+  </sql>
+  
+  <sql id = "region_column">
+  id,lotterycode,provinceid,provincename,lotteryname,createtime,creater,modifytime,modifier
+  </sql>
+ 
+  <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hui_app_lottery_info
+    where lotterycode = #{lotterycode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hui_app_lottery_info
+  </select>
+ 
+ <select id="queryLotteryInfoByCode"  resultType="com.hui10.app.model.lottery.LotteryInfo">
+ 	select <include refid="Base_Column_List"/> from hui_app_lottery_info where lotterycode = #{lotterycode}
+ </select>
+ 
+ <update id="updateLotteryInfo" parameterType="LotteryInfo">
+	update hui_app_lottery_info
+	<set>
+		lotteryname = #{lotteryname},
+		lotteryicon = #{lotteryicon},
+		price = #{price},
+		modifytime = #{modifytime},
+		modifier=#{modifier}
+	</set>
+	where lotterycode = #{lotterycode}
+</update>
+
+	<insert id="insertLotteryInfo" parameterType="LotteryInfo">
+		insert into hui_app_lottery_info
+		(<include refid="Base_Column_List" />)
+		values(
+		#{lotterycode},
+		#{lotteryname},
+		#{lotteryicon},
+		#{price},
+		#{createtime},
+		#{creater},
+		#{modifytime},
+		#{modifier}
+		)
+	</insert>
+
+	<delete id="deleteLotteryRegion">
+		delete from hui_app_lottery_region where lotterycode = #{lotterycode}
+	</delete>
+
+	<insert id="insertLotterRegion">
+		insert into hui_app_lottery_region
+		(<include refid="region_column" />)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.id},#{item.lotterycode},#{item.provinceid},#{item.provincename},#{item.lotteryname},#{item.createtime},#{item.creater},#{item.modifytime},#{item.modifier})
+		</foreach>
+	</insert>
+	<select id="queryLotteryListByNameOrCode" resultType="LotteryInfo">
+		SELECT <include refid="Base_Column_List"/> FROM hui_app_lottery_info WHERE lotterycode = #{lotterycode}
+		UNION
+		SELECT <include refid="Base_Column_List"/> FROM hui_app_lottery_info WHERE lotteryname = #{lotteryname}
+	</select>
+	
+	<select id="queryLotteryListByName" resultType="LotteryInfo">
+		SELECT <include refid="Base_Column_List"/> 
+		FROM hui_app_lottery_info 
+		WHERE lotteryname = #{lotteryname} 
+				AND lotterycode <![CDATA[ <> ]]> #{lotterycode}
+	</select>
+ 
+</mapper>

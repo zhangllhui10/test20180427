@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.message.MessageDao">
+
+	<!-- APP消息表 -->
+	<sql id="tbname"> hui_app_message </sql>
+
+	<sql id="columns">
+		id, type, title, content, uid, orderid, creator, createtime, modifier, modifytime
+	</sql>
+	
+	<!-- 新增消息  -->
+	<insert id="addMessage" parameterType="com.hui10.app.model.message.MessageInfo">
+	   insert <include refid="tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       id,
+	     </if>
+	     <if test="type != null">
+	       type,
+	     </if>
+	     <if test="title != null">
+	       title,
+	     </if>
+	     <if test="content != null">
+	       content,
+	     </if>
+	     <if test="uid != null">
+	       uid,
+	     </if>
+	     <if test="orderid != null">
+	       orderid,
+	     </if>     
+	     <if test="creator != null">
+	       creator,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       #{id,jdbcType=VARCHAR},
+	     </if>
+	     <if test="type != null">
+	       #{type,jdbcType=VARCHAR},
+	     </if>
+	     <if test="title != null">
+	       #{title,jdbcType=CLOB},
+	     </if>
+	     <if test="content != null">
+	       #{content,jdbcType=CLOB},
+	     </if>
+	     <if test="uid != null">
+	       #{uid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="orderid != null">
+	       #{orderid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="creator != null">
+	       #{creator,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	   </trim>
+	</insert>
+    
+    <!-- 查询消息列表 -->
+    <select id="queryMessageList" resultType="com.hui10.app.model.message.MessageInfo">
+       select
+          	<include refid="columns" />
+         from
+            <include refid="tbname"/>
+        where (uid is null or uid = #{uid,jdbcType=VARCHAR})
+        <if test="lastid != null">
+         <![CDATA[
+	      and id < #{lastid, jdbcType=VARCHAR}
+	     ]]>
+	    </if>
+        order by id desc limit #{pagesize}
+    </select>
+    
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.frofit.LotteryProfitDao">
+
+	<sql id="lottery_profit_prop">hui_app_lottery_profit_prop</sql>
+	<sql id="lottery_info">hui_app_lottery_info</sql>
+	<sql id="sys_city">hui_app_sys_city</sql>
+	<sql id="lottery_profit_prop_column">pp.id,pp.lotterycode,pp.provinceid,pp.totalprop,pp.status,pp.createtime,pp.updatetime
+	</sql>
+
+
+	<select id="queryProfitProp" resultType="com.hui10.app.model.profit.LotteryProfitProp">
+		select
+		<include refid="lottery_profit_prop_column" />
+		from
+		<include refid="lottery_profit_prop" />		pp,
+		<include refid="lottery_info" />		l 		
+		where
+		    pp.lotterycode = l.lotterycode and
+		   	pp.status = '1' 
+			<if test="lotterycode != null and lotterycode != ''">
+			and	pp.lotterycode = #{lotterycode}
+			</if>
+			<if test="provinceid != null and provinceid != ''">
+			and 	pp.provinceid = #{provinceid}
+			</if>
+		
+		order by pp.lotterycode,pp.provinceid
+	</select>
+
+	<select id="queryProfitDetailProp" resultType="com.hui10.app.model.profit.LotteryProfitDetailProp">
+	SELECT l.lotterycode,l.lotteryname,lr.provinceid,lr.provincename,
+			acinfo.acquirerno,aca.acquirername,acl.acquirerprop,acl.unionpayprop,
+			minfo.merchantid,minfo.merchantno,minfo.merchantname,ml.merchantprop
+	FROM hui_app_acquirer_apply aca,hui_app_acquirer_lottery acl,hui_app_acquirer_info acinfo,
+			hui_app_lottery_info l,hui_app_lottery_region lr,
+			hui_app_merchant_info minfo,hui_app_merchant_apply ma,hui_app_merchant_lottery ml
+	WHERE aca.applyid = acl.applyid
+	AND aca.acquirerno = acl.acquirerno
+	AND acinfo.acquirerno = aca.acquirerno
+	AND aca.provinceid = lr.provinceid
+	AND acl.lotterycode = l.lotterycode
+	AND aca.auditstatus = '2'
+	AND l.lotterycode = lr.lotterycode
+	AND minfo.status = '1'
+	AND minfo.merchantid = ma.merchantid
+	AND ma.auditstatus = '2'
+	AND ma.lotterystatus = '2'
+	AND minfo.merchantid = ml.merchantid
+	AND ma.applyid = ml.applyid
+	AND ml.lotterycode = lr.lotterycode
+	AND minfo.acquirerno = acinfo.acquirerno
+	AND minfo.provinceid = lr.provinceid
+	<if test="lotterycode != null and lotterycode != ''">
+		AND	l.lotterycode = #{lotterycode}
+	</if>
+	<if test="provinceid != null and provinceid != ''">
+		AND 	lr.provinceid = #{provinceid}
+	</if>
+	ORDER BY l.lotterycode,lr.provinceid
+	</select>
+</mapper>

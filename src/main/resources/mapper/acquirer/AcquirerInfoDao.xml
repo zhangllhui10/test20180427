@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.acquirer.AcquirerInfoDao">
+
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.acquirer.AcquirerApply">
+	    <id column="applyid" jdbcType="VARCHAR" property="applyid" />
+	    <result property="acquirername" jdbcType="VARCHAR" column="acquirername"/>
+	    <result property="acquirerno" jdbcType="VARCHAR" column="acquirerno"/>
+	    <result property="protocolname" jdbcType="VARCHAR" column="protocolname"/>
+	    <result property="protocolno" jdbcType="VARCHAR" column="protocolno"/>
+	    <result property="issuer" jdbcType="VARCHAR" column="issuer"/>
+	    <result property="provider" jdbcType="VARCHAR" column="provider"/>
+	    <result property="provinceid" jdbcType="VARCHAR" column="provinceid"/>
+	    <result property="provincename" jdbcType="VARCHAR" column="provincename"/>
+	    <result property="protocolphoto" jdbcType="VARCHAR" column="protocolphoto"/>
+	    <result property="formphoto" jdbcType="VARCHAR" column="formphoto"/>
+	    <result property="starttime" jdbcType="TIMESTAMP" column="starttime"/>
+	    <result property="endtime" jdbcType="TIMESTAMP" column="endtime"/>
+	    <result property="bankaccount" jdbcType="VARCHAR" column="bankaccount"/>
+	    <result property="accountname" jdbcType="VARCHAR" column="accountname"/>
+	    <result property="salestatus" jdbcType="VARCHAR" column="salestatus"/>
+	    <result property="auditstatus" jdbcType="VARCHAR" column="auditstatus"/>
+	    <result property="auditreason" jdbcType="VARCHAR" column="auditreason"/>
+	    <result property="createtime" jdbcType="TIMESTAMP" column="createtime"/>
+	    <result property="creater" jdbcType="VARCHAR" column="creater"/>
+	    <result property="modifytime" jdbcType="TIMESTAMP" column="modifytime"/>
+	    <result property="modifier" jdbcType="VARCHAR" column="modifier"/>
+	    <result property="merchantcount" jdbcType="INTEGER" column="merchantcount"/>
+	    <result property="bankname" jdbcType="VARCHAR" column="bankname"/>
+	    <result property="bankcode" jdbcType="VARCHAR" column="bankcode"/>
+	    <result property="branchname" jdbcType="VARCHAR" column="branchname"/>
+	    <result property="branchcode" jdbcType="VARCHAR" column="branchcode"/>
+	    <result property="channelmercno" jdbcType="VARCHAR" column="channelmercno"/>
+	    <result property="accounttype" jdbcType="VARCHAR" column="accounttype"/>
+	    <result property="financephone" jdbcType="VARCHAR" column="financephone"/>
+	    <result property="paycommission" jdbcType="FLOAT" column="paycommission"/>
+	    <collection property="lotterylist" ofType="com.hui10.app.model.acquirer.AcquirerLottery" column="lotterycode">
+	      <id property="lotterycode" jdbcType="VARCHAR" column="lotterycode"/>
+	      <result property="lotteryname" jdbcType="VARCHAR" column="lotteryname"/>
+	      <result property="unionpayprop" jdbcType="FLOAT" column="unionpayprop"/>
+	      <result property="acquirerprop" jdbcType="FLOAT" column="acquirerprop"/>
+	    </collection>
+	</resultMap>
+
+	<!-- 销售渠道信息表 -->
+	<sql id="info_tbname">hui_app_acquirer_info</sql>
+	
+	<!-- 销售渠道入网申请信息表 -->
+	<sql id="apply_tbname">hui_app_acquirer_apply</sql>
+	
+	<!-- 渠道销售彩票信息表 -->
+	<sql id="lottery_tbname">hui_app_acquirer_lottery</sql>
+
+	<sql id="info_columns">
+		acquirerid, acquirername, acquirerno ,bankaccount, accountname ,secretkey, createtime, creater, modifytime, modifier,bankname,bankcode,branchname,branchcode,accounttype,financephone,paycommission
+	</sql>
+
+	<sql id="apply_columns">
+		a.applyid, a.acquirername, a.acquirerno, a.protocolname, a.protocolno, a.issuer, a.provider, a.provinceid, 
+		a.provincename, a.protocolphoto, a.formphoto, a.starttime, a.endtime, a.bankaccount, a.accountname, a.salestatus, 
+		a.auditstatus, a.auditreason, a.createtime, a.creater, a.modifytime, a.modifier, a.bankname,a.bankcode,a.branchname,a.branchcode,a.channelmercno,
+		a.accounttype,a.financephone,a.paycommission,
+		b.lotterycode, b.lotteryname, b.unionpayprop, b.acquirerprop
+	</sql>
+	
+	<!-- 新增销售渠道  -->
+	<insert id="addAcquirer" parameterType="com.hui10.app.model.acquirer.AcquirerInfo">
+	   insert <include refid="info_tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="acquirerid != null">
+	       acquirerid,
+	     </if>
+	     <if test="acquirername != null">
+	       acquirername,
+	     </if>
+	     <if test="acquirerno != null">
+	       acquirerno,
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount,
+	     </if>
+	     <if test="accountname != null">
+	       accountname,
+	     </if>
+	     <if test="secretkey != null">
+	       secretkey,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="creater != null">
+	       creater,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	     <if test="bankname != null">
+	       bankname,
+	     </if>
+	     <if test="bankcode != null">
+	       bankcode,
+	     </if>
+	     <if test="branchname != null">
+	      branchname ,
+	     </if>
+	     <if test="branchcode != null">
+	      branchcode ,
+	     </if>
+	     <if test="accounttype != null">
+	       accounttype,
+	     </if>
+	     <if test="financephone != null">
+	       financephone,
+	     </if>
+	     <if test="paycommission != null">
+	       paycommission,
+	     </if>
+	     
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="acquirerid != null">
+	       #{acquirerid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirername != null">
+	       #{acquirername,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirerno != null">
+	       #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankaccount != null">
+	       #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="secretkey != null">
+	       #{secretkey,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="creater != null">
+	       #{creater,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	      <if test="bankname != null">
+	       #{bankname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankcode != null">
+	       #{bankcode,jdbcType=VARCHAR},
+	     </if>
+	     <if test="branchname != null">
+	       #{branchname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="branchcode != null">
+	       #{branchcode,jdbcType=VARCHAR},
+	     </if>
+	      <if test="accounttype != null">
+	       #{accounttype,jdbcType=VARCHAR},
+	     </if>
+	      <if test="financephone != null">
+	       #{financephone,jdbcType=VARCHAR},
+	     </if>
+	      <if test="paycommission != null">
+	       #{paycommission,jdbcType=FLOAT},
+	     </if>
+	   </trim>
+	 </insert>
+	
+	<!-- 修改销售渠道  -->
+	<update id="modifyAcquirer" parameterType="com.hui10.app.model.acquirer.AcquirerInfo">
+	   update <include refid="info_tbname" />
+	   <set>
+	     <if test="acquirername != null">
+	       acquirername = #{acquirername,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="acquirerno != null">
+	       acquirerno = #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount = #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       accountname = #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="secretkey != null">
+	       secretkey = #{secretkey,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       modifier = #{modifier,jdbcType=VARCHAR},
+	     </if>
+	      <if test="paycommission != null">
+	       paycommission = #{paycommission,jdbcType=FLOAT},
+	     </if>
+	  </set>
+	  where acquirerid = #{acquirerid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查询销售渠道列表 -->
+	<select id="queryAcquirerList" resultType="com.hui10.app.model.acquirer.AcquirerInfo">
+		select <include refid="info_columns" />
+		  from <include refid="info_tbname" />
+		 order by acquirername asc
+	</select>
+	
+	<!-- 查询销售渠道详情 -->
+	<select id="queryAcquirerInfo" parameterType="java.lang.String" resultType="com.hui10.app.model.acquirer.AcquirerInfo">
+		select <include refid="info_columns" />
+		  from <include refid="info_tbname" />
+		 where acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 新增销售渠道入网申请  -->
+	<insert id="addAcquirerApply" parameterType="com.hui10.app.model.acquirer.AcquirerApply">
+	   insert <include refid="apply_tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="applyid != null">
+	       applyid,
+	     </if>
+	     <if test="acquirername != null">
+	       acquirername,
+	     </if>
+	     <if test="acquirerno != null">
+	       acquirerno,
+	     </if>
+	     <if test="protocolname != null">
+	       protocolname,
+	     </if>
+	     <if test="protocolno != null">
+	       protocolno,
+	     </if>
+	     <if test="issuer != null">
+	       issuer,
+	     </if>
+	     <if test="provider != null">
+	       provider,
+	     </if>
+	     <if test="provinceid != null">
+	       provinceid,
+	     </if>
+	     <if test="provincename != null">
+	       provincename,
+	     </if>
+	     <if test="protocolphoto != null">
+	       protocolphoto,
+	     </if>
+	     <if test="formphoto != null">
+	       formphoto,
+	     </if>
+	     <if test="starttime != null">
+	       starttime,
+	     </if>
+	     <if test="endtime != null">
+	       endtime,
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount,
+	     </if>
+	     <if test="accountname != null">
+	       accountname,
+	     </if>
+	     <if test="salestatus != null">
+	       salestatus,
+	     </if>
+	     <if test="auditstatus != null">
+	       auditstatus,
+	     </if>
+	     <if test="auditreason != null">
+	       auditreason,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="creater != null">
+	       creater,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	      <if test="bankname != null">
+	       bankname,
+	     </if>
+	      <if test="bankcode != null">
+	       bankcode,
+	     </if>
+	      <if test="branchname != null">
+	       branchname,
+	     </if>
+	      <if test="branchcode != null">
+	      branchcode ,
+	     </if>
+	      <if test="channelmercno != null">
+	       channelmercno,
+	     </if>
+	      <if test="accounttype != null">
+	       accounttype,
+	     </if>
+	     <if test="financephone != null">
+	       financephone,
+	     </if>
+	     <if test="paycommission != null">
+	       paycommission,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="applyid != null">
+	       #{applyid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirername != null">
+	       #{acquirername,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirerno != null">
+	       #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolname != null">
+	       #{protocolname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolno != null">
+	       #{protocolno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="issuer != null">
+	       #{issuer,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provider != null">
+	       #{provider,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provinceid != null">
+	       #{provinceid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provincename != null">
+	       #{provincename,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolphoto != null">
+	       #{protocolphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="formphoto != null">
+	       #{formphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="starttime != null">
+	       #{starttime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="endtime != null">
+	       #{endtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="bankaccount != null">
+	       #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="salestatus != null">
+	       #{salestatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditstatus != null">
+	       #{auditstatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditreason != null">
+	       #{auditreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="creater != null">
+	       #{creater,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	      <if test="bankname != null">
+	       #{bankname,jdbcType=VARCHAR},
+	     </if>
+	      <if test="bankcode != null">
+	       #{bankcode,jdbcType=VARCHAR},
+	     </if>
+	      <if test="branchname != null">
+	       #{branchname,jdbcType=VARCHAR},
+	     </if>
+	      <if test="branchcode != null">
+	       #{branchcode,jdbcType=VARCHAR},
+	     </if>
+	      <if test="channelmercno != null">
+	       #{channelmercno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accounttype != null">
+	       #{accounttype,jdbcType=VARCHAR},
+	     </if>
+	      <if test="financephone != null">
+	       #{financephone,jdbcType=VARCHAR},
+	     </if>
+	      <if test="paycommission != null">
+	       #{paycommission,jdbcType=FLOAT},
+	     </if>
+	   </trim>
+	 </insert>
+	 	
+	<!-- 修改销售渠道入网申请  -->
+	<update id="modifyAcquirerApply" parameterType="com.hui10.app.model.acquirer.AcquirerApply">
+	   update <include refid="apply_tbname" />
+	   <set>
+	     <if test="acquirername != null">
+	       acquirername = #{acquirername,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="acquirerno != null">
+	       acquirerno = #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolname != null">
+	       protocolname = #{protocolname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolno != null">
+	       protocolno = #{protocolno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="issuer != null">
+	       issuer = #{issuer,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provider != null">
+	       provider = #{provider,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provinceid != null">
+	       provinceid = #{provinceid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provincename != null">
+	       provincename = #{provincename,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolphoto != null">
+	       protocolphoto = #{protocolphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="formphoto != null">
+	       formphoto = #{formphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="starttime != null">
+	       starttime = #{starttime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="endtime != null">
+	       endtime = #{endtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount = #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       accountname = #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="salestatus != null">
+	       salestatus = #{salestatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditstatus != null">
+	       auditstatus = #{auditstatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditreason != null">
+	       auditreason = #{auditreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       modifier = #{modifier,jdbcType=VARCHAR},
+	     </if>
+	  </set>
+	  where applyid = #{applyid,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 查询销售渠道入网申请总数 -->
+	<select id="queryAcquirerApplyCount" parameterType="java.util.Map" resultType="int">
+	    select count(*)
+		  from <include refid="apply_tbname" />
+		 where 1=1
+	     <if test="acquirerno != null">
+	       and acquirerno = #{acquirerno,jdbcType=VARCHAR}
+         </if>
+	     <if test="auditstatus != null">
+       	   and auditstatus = #{auditstatus,jdbcType=VARCHAR}
+         </if>
+	     <if test="salestatus != null">
+       	   and salestatus = #{salestatus,jdbcType=VARCHAR}
+         </if>
+	     <if test="protocolkey != null">
+       	   and (protocolno LIKE CONCAT('%',#{protocolkey},'%') or protocolname LIKE CONCAT('%',#{protocolkey},'%'))
+         </if>
+	</select>
+	
+	<!-- 查询销售渠道入网申请列表 -->
+	<select id="queryAcquirerApplyList" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select a.applyid,
+			a.acquirername,
+			a.acquirerno,
+			a.protocolname,
+			a.protocolno,
+			a.issuer,
+			a.provider,
+			a.provinceid,
+			a.provincename,
+			a.protocolphoto,
+			a.formphoto,
+			a.starttime,
+			a.endtime,
+			a.bankaccount,
+			a.accountname,
+			a.salestatus,
+			a.auditstatus,
+			a.auditreason,
+			a.createtime,
+			a.creater,
+			a.modifytime,
+			a.modifier,
+			b.lotterycode,
+			b.lotteryname,
+			b.unionpayprop,
+			b.acquirerprop,
+			a.merchantcount
+		from 
+		( select c.*, (select count(*) from hui_app_merchant_info d where c.acquirerno = d.acquirerno and c.provinceid = d.provinceid) as merchantcount
+			from hui_app_acquirer_apply c
+		   where 1=1
+		   <if test="acquirerno != null">
+	       	   and acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	       </if>
+		   <if test="auditstatus != null">
+	       	   and auditstatus = #{auditstatus,jdbcType=VARCHAR}
+	       </if>
+		   <if test="salestatus != null">
+	       	   and salestatus = #{salestatus,jdbcType=VARCHAR}
+	       </if>
+		   <if test="protocolkey != null">
+	       	   and (protocolno LIKE CONCAT('%',#{protocolkey},'%') or protocolname LIKE CONCAT('%',#{protocolkey},'%'))
+	       </if>
+		   order by c.modifytime desc limit #{startnum},#{pagesize}		
+		) as a join hui_app_acquirer_lottery b on a.applyid = b.applyid
+	</select>
+	
+	<!-- 查询销售渠道入网申请详情 -->
+	<select id="queryAcquirerApplyInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select <include refid="apply_columns" />
+		  from hui_app_acquirer_apply a, hui_app_acquirer_lottery b
+		 where a.applyid = b.applyid
+		   and a.applyid = #{applyid,jdbcType=VARCHAR}
+	</select>	
+	
+	<!-- 校验录入销售渠道信息是否存在 -->
+	<select id="VerifyAcquirerApply" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="apply_columns" /> 
+		  from hui_app_acquirer_lottery b,hui_app_acquirer_apply a
+		 where a.applyid = b.applyid
+		   <if test="applyid != null">
+		   	   <![CDATA[
+	       	  	 and a.applyid <> #{applyid,jdbcType=VARCHAR}
+	       	   ]]>
+	       </if>
+		   and a.acquirerno = #{acquirerno,jdbcType=VARCHAR}
+		   and a.protocolno = #{protocolno,jdbcType=VARCHAR}
+	       and a.provinceid = #{provinceid,jdbcType=VARCHAR}
+	       and b.lotterycode in (
+	       <foreach collection="lotterys" item="lottery" index="index"	separator=",">
+	   	 	   #{lottery.lotterycode}
+	   	   </foreach>
+	       )
+	</select>
+	
+	<!-- 新增渠道销售彩票关联信息 -->
+	<insert id="addAcquirerLotterys">
+	   insert hui_app_acquirer_lottery
+	   (
+	   	 id, applyid, acquirerno, lotterycode, lotteryname, unionpayprop, acquirerprop
+	   )
+	   values
+	   <foreach collection="lotterys" item="lottery" index="index"	separator=",">
+	   (
+	   	 #{lottery.id},#{lottery.applyid},#{lottery.acquirerno},#{lottery.lotterycode},#{lottery.lotteryname},#{lottery.unionpayprop},#{lottery.acquirerprop}
+	   )
+	   </foreach>
+	</insert>
+	 
+	 <!-- 删除渠道销售彩票关联信息-->
+	<delete id="deleteAcquirerLotterys" parameterType="java.lang.String">
+	    delete 
+	    from hui_app_acquirer_lottery 
+	    where applyid = #{applyid,jdbcType=VARCHAR}
+  	</delete>
+  	
+  	<!-- 查询渠道销售彩票列表 -->
+	<select id="queryAcquirerLotteryList" parameterType="java.util.Map" resultType="java.util.Map">
+		select b.lotterycode, b.lotteryname
+		  from hui_app_acquirer_lottery b,hui_app_acquirer_apply a
+		 where  b.acquirerno = a.acquirerno
+		   and a.acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	       and a.provinceid = #{provinceid,jdbcType=VARCHAR}
+	     group by b.lotterycode, b.lotteryname
+		 order by b.lotterycode desc	
+	</select>
+  	
+  	<!-- 通过登录账户查询销售渠道 -->
+	<select id="queryAcquirerByAccount" parameterType="java.lang.String" resultType="com.hui10.app.model.acquirer.AcquirerInfo">
+		select a.acquirername, a.acquirerno
+		  from hui_app_acquirer_info a,hui_app_account b
+		 where a.acquirerno = b.acquirerno
+		   and b.accountid = #{accountid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 更新账户关联销售渠道信息 -->
+	<update id="updateAccountAcquirerInfo" parameterType="java.util.Map">
+        update 
+        	hui_app_account 
+        set
+            acquirerno = #{acquirerno,jdbcType=VARCHAR},
+            acquirername = #{acquirername,jdbcType=VARCHAR}
+        where
+            accountid = #{accountid,jdbcType=VARCHAR}
+    </update>
+    <select id="getAcquirerInfo" resultType="com.hui10.app.model.acquirer.AcquirerInfo">
+	    SELECT <include refid="info_columns" />
+	    FROM <include refid="info_tbname" />
+		WHERE  	cquirername LIKE  #{acquirername}"%" AND
+				acquirerno = #{acquirerno,jdbcType=VARCHAR}
+    </select>
+    
+     <select id="getAcquirerInfoLogin" resultType="com.hui10.app.model.acquirer.AcquirerInfo">
+	    SELECT id,acquirername,acquirerno,status
+	    FROM hui_app_acquirer_info_login
+		WHERE acquirername LIKE  "%"#{acquirername}"%" AND 
+			  acquirerno = #{acquirerno,jdbcType=VARCHAR}
+    </select>
+    
+    
+</mapper>

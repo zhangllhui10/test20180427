@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.MarketingAccessChannelDao">
+	<sql id="base_colums">channelid,gatewayid,channelcode,channelname,status,createtime,updatetime</sql>
+
+	<insert id="addChannel" >
+		INSERT INTO hui_app_marketing_access_channel
+		(<include refid="base_colums"/>)
+		VALUES(#{channelid},
+				#{gatewayid},
+				FLOOR(RAND()*10000000),
+				#{channelname},
+				#{status},
+				#{createtime},
+				#{updatetime})
+	</insert>
+	<update id="editChannel">
+		UPDATE hui_app_marketing_access_channel
+		SET channelname = #{channelname}
+			,gatewayid = #{gatewayid}
+			,updatetime = #{updatetime} 
+		WHERE channelid = #{channelid}
+	</update>
+	
+	<update id="updateStatus">
+		UPDATE hui_app_marketing_access_channel
+		SET status = #{status}
+			,updatetime = NOW() 
+		WHERE channelid = #{channelid}
+	</update>
+	<select id="getChannel" resultType="MarketingAccessChannel">
+		SELECT
+		<include refid="base_colums" />
+		FROM hui_app_marketing_access_channel
+		<where>
+			<if test="channelname != null">
+				channelname = #{channelname}
+			</if>
+			<if test="channelid != null">
+				channelid = #{channelid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getChannelForUpdate" resultType="MarketingAccessChannel">
+		SELECT
+		<include refid="base_colums" />
+		FROM hui_app_marketing_access_channel
+		<where>
+			channelname = #{channelname}
+			AND channelid <![CDATA[  <> ]]> #{channelid}
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.system.CityDao">
+	
+	<!-- 查询系统城市信息 -->
+	<select id="getCityById" resultType="City">
+		select 
+			provinceid,cityid,provincename,cityname,type,sort,status,createtime,updatetime
+		from 
+			hui_app_sys_city
+		where 
+		type = #{type} and status = '1'
+		<choose>
+			<when test='type == "1"'>
+				and provinceid = #{areaid}
+			</when>
+			<when test='type == "2"'>
+				and cityid = #{areaid}
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 查询系统城市子信息 （前端导出用）-->
+	<select id="getSubCityList" resultType="City">
+		select 
+			<choose>
+				<when test='type.state == "1"'>
+					provinceid,provincename
+				</when>
+				<when test='type.state == "2"'>
+					cityid as provinceid, cityname as provincename
+				</when>
+				
+		</choose>
+			hui_app_sys_city
+		where 
+		type = #{type.state} and status = '1'
+		<choose>
+			<when test='type.state == "1"'>
+				<if test="areaid != null">
+					and provinceid = #{areaid}
+				</if>
+				order by provinceid
+			</when>
+			<when test='type.state == "2"'>
+				<if test="areaid != null">
+					and provinceid = #{areaid}
+				</if>
+				order by provinceid,cityid
+			</when>
+			<when test='type.state == "3"'>
+			<if test="areaid != null">
+					and cityid = #{areaid}
+				</if>
+				order by provinceid,cityid
+			</when>
+		</choose>
+	</select>
+	
+	<select id="getCityByIds" resultType="City">
+		select 
+			provinceid,cityid,provincename,cityname,type,sort,status,createtime,updatetime
+		from 
+			hui_app_sys_city
+		where 
+		type = #{type} and status = '1'
+		<choose>
+			<when test='type == "1"'>
+				and provinceid in (
+				<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+				</foreach>
+				)
+			</when>
+			<when test='type == "2"'>
+				and cityid in (
+				<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+				</foreach>
+				)
+			</when>
+		</choose>
+	</select>
+	
+</mapper>

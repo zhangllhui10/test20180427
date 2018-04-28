@@ -1,0 +1,8 @@
+.settings
+/target
+.project
+.classpath
+src/test/java/com/hui10/app/array/TestArray.java
+src/test/java/com/hui10/app/lock/Resource.java
+src/test/java/com/hui10/app/lock/WriteReadLock.java
+src/test/java/com/hui10/app/lock/WriteReadLockTest.java

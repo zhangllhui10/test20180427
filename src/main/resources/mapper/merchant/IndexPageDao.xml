@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.pc.dao.merchant.IndexPageDao">
+  
+  <sql id="hui_order">hui_app_lottery_order</sql>
+  
+  <select id="findSale" resultType="java.util.Map">
+  	select count(1) as salecount, sum(actualamount) as salemoney
+  	from
+  	<include refid="hui_order"/>
+  	where merchantno = #{merchantno} and status = '2' and ordertype = '1'
+  	
+  	<if test="begin != null">
+		and ordertime <![CDATA[>]]> #{begin}
+  	</if>
+  	
+  	<if test="end != null">
+		and ordertime <![CDATA[<]]> #{end}
+  	</if>
+  </select>
+  
+  <select id="findTodaySale" resultType="java.util.Map">
+  	select DATE_FORMAT(ordertime, '%H') as ordertime, count(1) as salecount, sum(actualamount) salemoney
+  	from
+  	<include refid="hui_order"/>
+  	where merchantno = #{merchantno} and status = '2' and ordertype = '1'
+  	
+  	<if test="begin != null">
+		and ordertime <![CDATA[>]]> #{begin}
+  	</if>
+  	
+  	<if test="end != null">
+		and ordertime <![CDATA[<]]> #{end}
+  	</if>
+  	group by DATE_FORMAT(ordertime, '%H')
+  </select>
+  
+</mapper>

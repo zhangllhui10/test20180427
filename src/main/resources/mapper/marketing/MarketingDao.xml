@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.MarketingDao">
+  
+  <resultMap type="com.hui10.app.model.marketing.MarketingGroup" id="groupMap">
+	<result column="bettime" property="bettime" />
+	<result column="betlimit" property="betlimit" />
+	<result column="israndom" property="israndom" />
+	<result column="betnumberrule" property="betnumberrule" />
+	<result column="days" property="days" />
+	<result column="money" property="money" />
+	<result column="betnumber" property="betnumber" />
+	<collection property="cityids" column="groupid" ofType="java.lang.String">
+		<result column="cityid" property="cityid" />
+	</collection>
+	<collection property="merchantnos" column="groupid" ofType="java.lang.String">
+		<result column="merchantno" property="merchantno" />
+	</collection>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+	    marketingid, marketingname, starttime, endtime, indefinite, initiator, bettimetype, bettime, lotterycode, 
+	    betlimit, receivenum, israndom, betnumberrule, days, status, resource, createtime, updatetime
+  </sql>
+  
+  <sql id="marketing">hui_app_marketing</sql>
+  <sql id="mgroup">hui_app_marketing_access_group</sql>
+  <sql id="city">hui_app_marketing_access_group_city</sql>
+  <sql id="merchant">hui_app_marketing_access_group_merchant</sql>
+  
+  <insert id="insert" parameterType="com.hui10.app.model.marketing.Marketing">
+	    insert into hui_app_marketing 
+	    (	
+	    		<include refid="Base_Column_List"/>
+	    )
+	    values 
+	    (
+	    		#{marketingid},#{marketingname},#{starttime},#{endtime},#{indefinite},#{initiator},#{bettimetype},
+	    		#{bettime},#{lotterycode},#{betlimit},#{receivenum},#{israndom},#{betnumberrule},#{days},#{status},
+	    		#{resource},	#{createtime}, #{updatetime}
+	    )
+  </insert>
+  
+  <select id="findMarketingGroups" parameterType="java.lang.String" resultMap="groupMap">
+  	select m.bettime, m.betlimit, m.israndom, m.betnumberrule, m.days, g.groupid, g.money, g.betnumber, c.cityid, mer.merchantno
+	from
+	<include refid="marketing"/> m
+	join
+	<include refid="mgroup"/> g 
+	on m.marketingid = g.marketingid
+	left join
+	<include refid="city"/> c
+	on
+	g.groupid = c.groupid
+	left join
+	<include refid="merchant"/> mer
+	on
+	g.groupid = mer.groupid
+	where m.marketingid = #{marketingid} and channelid = #{channelid}
+	order by g.money desc,g.betnumber desc
+  </select>
+  
+  <select id="selectById" parameterType="java.lang.String" resultType="com.hui10.app.model.marketing.Marketing">
+    select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing
+    where marketingid = #{marketingid,jdbcType=VARCHAR}
+  </select>
+ 
+  <update id="updateById" parameterType="com.hui10.app.model.marketing.Marketing">
+	    update 
+	    hui_app_marketing
+	    set 
+	   	  marketingname = #{marketingname},
+	      starttime = #{starttime},
+	      endtime = #{endtime},
+	      initiator = #{initiator},
+	      indefinite = #{indefinite},
+	      bettimetype = #{bettimetype},
+	      bettime = #{bettime},
+	      lotterycode = #{lotterycode},
+	      betlimit = #{betlimit},
+	      israndom = #{israndom},
+	      betnumberrule = #{betnumberrule},
+	      days = #{days},
+	      status = #{status},
+	      resource = #{resource},
+	      updatetime = now()
+	    where marketingid = #{marketingid}
+  </update>
+  
+  <select id="selectByMarketingname" parameterType="java.lang.String" resultType="com.hui10.app.model.marketing.Marketing">
+   	select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing
+    where marketingname = #{marketingname,jdbcType=VARCHAR}
+    	<if test="marketingid != null">
+    	and marketingid != #{marketingid}
+    	</if>
+  </select>
+  
+  <select id="queryMarketingList" resultType="com.hui10.app.model.marketing.Marketing">
+   	select <include refid="Base_Column_List" />
+      from hui_app_marketing
+      where status = '1' 
+      and bettimetype = '2'
+  </select>
+  
+  <select id="findCurrMarketings" parameterType="java.lang.String" resultType="com.hui10.app.model.marketing.Marketing">
+   	select *
+    from hui_app_marketing
+    where status = '1' and lotterycode = #{lotterycode} and 
+    (	
+    		now() between starttime and endtime
+    		or
+    		indefinite = '1'
+    	)
+  </select>
+  
+</mapper>

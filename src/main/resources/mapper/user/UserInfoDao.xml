@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.user.UserInfoDao">
+	<sql id="user_table">hui_app_user_info</sql>
+	<sql id="bankcard_table">hui_app_user_bankcard</sql>
+	<sql id="user_columns">uid,nickname,email,phone,idtype,age,sex,jointime,status,portraiturl,birthday</sql>
+	<resultMap type="com.hui10.app.model.user.UserSimpleInfo" id="userSimpleInfo">
+		<id column="uid" javaType="String" jdbcType="VARCHAR" property="uid" />
+		<result column="nickname" javaType="String" jdbcType="VARCHAR" property="nickname" />
+		<result column="phone" javaType="String" jdbcType="VARCHAR" property="phone" />
+		<result column="portraiturl" javaType="String" jdbcType="VARCHAR" property="portraiturl" />
+		<result column="sex" javaType="Integer" jdbcType="VARCHAR" property="sex" />
+		<collection property="cardlist" ofType="com.hui10.app.model.user.UserBankCard" column="buid">
+			<id column="id" jdbcType="VARCHAR" property="id" javaType="String" />
+			<result column="cardno" jdbcType="VARCHAR" property="cardno" javaType="String" />
+			<result column="cardname" jdbcType="VARCHAR" property="cardname" javaType="String" />
+			<result column="cardholder" jdbcType="VARCHAR" property="cardholder" javaType="String" />
+			<result column="reservephone" jdbcType="VARCHAR" property="reservephone" javaType="String" />
+			<result column="buid" jdbcType="VARCHAR" property="uid" javaType="String" />
+			<result column="createtime" jdbcType="TIMESTAMP" property="createtime" javaType="Date" />
+		</collection>
+	</resultMap>
+
+
+	<insert id="insertUserInfo">
+		INSERT INTO
+		<include refid="user_table" />
+		(uid,phone,jointime,nickname,regtype,regip,regposition
+		<if test="platfrom != null">,platfrom</if>
+		)
+		VALUES
+		(
+		#{uid},
+		#{phone},
+		#{jointime},
+		#{nickname},
+		#{regtype},
+		#{regip},
+		#{regposition}
+		<if test="platfrom != null">,#{platfrom}</if>
+		)
+	</insert>
+
+	<select id="queryUserByPhone" resultType="String">
+		SELECT u.uid
+		FROM
+		<include refid="user_table" />
+		u
+		WHERE u.phone = #{phone}
+		<if test="status != null">
+			and status = #{status}
+		</if>
+	</select>
+	<select id="isExistUserByUid" resultType="Map">
+		select u.uid,u.phone
+		from
+		<include refid="user_table" />
+		u
+		where u.uid = #{uid}
+	</select>
+
+	<select id="queryUserSimpleInfo" resultMap="userSimpleInfo" parameterType="String">
+		select
+		u.uid,
+		u.nickname,
+		u.phone,
+		u.portraiturl,
+		u.sex,
+		b.id,
+		b.uid as buid,
+		b.cardno,
+		b.cardname,
+		b.cardholder,
+		b.reservephone,
+		b.createtime
+		from
+		<include refid="user_table" />	u 
+		left join
+		<include refid="bankcard_table" />	b
+		on u.uid = b.uid
+		where u.uid = #{uid} and 
+			  u.status = '1'
+	</select>
+	
+	<select id="queryUserInfoByUid" resultType="UserInfo">
+	select <include refid="user_columns"/> from <include refid="user_table" /> where uid = #{uid} and status = '1'
+	</select>
+	
+	<update id="updateUserInfosByUid" parameterType="com.hui10.app.model.user.UserInfo">
+		update hui_app_user_info 
+		<set>
+			updatetime = NOW()
+			<if test="nickname != null">
+			,nickname = #{nickname}
+			</if>
+			<if test="portraiturl != null">
+			,portraiturl = #{portraiturl}
+			</if>
+			<if test="sex != null">
+			,sex = #{sex}
+			</if>
+			<if test="phone != null">
+			,phone = #{phone}
+			</if>
+		</set>
+		<where>
+			 uid = #{uid}
+		</where>
+	</update>
+
+</mapper>

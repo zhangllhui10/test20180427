@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.PromotionRecordDao">
+
+	<!-- 营销活动彩票赠送记录表  -->
+	<sql id="record"> hui_app_marketing_lottery_giving_record</sql>
+	
+	<sql id="marketing">hui_app_marketing</sql>
+	
+	<sql id="huiorder">hui_app_lottery_order</sql>
+
+	<sql id="columns">
+		id, marketingid, channelid, ticketid, uid, lotterycode, issueno, betdetail, stationno, 
+		stationprovince, merchantno, acquirerno, serialno, status, orderid, givetime, receivetime, 
+		deadlinetime, createtime, updatetime, orderno
+	</sql>
+	
+	<insert id="addBatchGivingRecords" parameterType="java.util.List">
+		insert into
+		<include refid="record"/>
+		(
+			<include refid="columns"/>
+		)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.id},#{item.marketingid},#{item.channelid},#{item.ticketid},#{item.uid},#{item.lotterycode}
+				,#{item.issueno},#{item.betdetail},#{item.stationno},#{item.stationprovince},#{item.merchantno},#{item.acquirerno}
+				,#{item.serialno},#{item.status},#{item.orderid},#{item.givetime},#{item.receivetime},#{item.deadlinetime},#{item.createtime},
+				#{item.updatetime},#{item.orderno}
+			)
+		</foreach>
+	</insert>
+	
+	<select id="userDaySendedLotteryNumber" resultType="java.lang.Integer">
+		select count(1) from
+		<include refid="record"/>
+		where 
+		marketingid = #{marketingid} and uid = #{uid} and givetime between #{daystart} and #{dayend}
+	</select>
+	
+    
+    <!-- 新增赠送记录  -->
+	<insert id="addLotteryGivingRecord" parameterType="com.hui10.app.model.marketing.LotteryGivingRecordInfo">
+	   insert <include refid="record" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       id,
+	     </if>
+	     <if test="marketingid != null">
+	       marketingid,
+	     </if>	     
+	     <if test="channelid != null">
+	       channelid,
+	     </if>
+	     <if test="ticketid != null">
+	       ticketid,
+	     </if>
+	     <if test="uid != null">
+	       uid,
+	     </if>
+	     <if test="lotterycode != null">
+	       lotterycode,
+	     </if>
+	     <if test="issueno != null">
+	       issueno,
+	     </if>
+	     <if test="betdetail != null">
+	       betdetail,
+	     </if>
+	     <if test="stationno != null">
+	       stationno,
+	     </if>
+	     <if test="stationprovince != null">
+	       stationprovince,
+	     </if>
+	     <if test="merchantno != null">
+	       merchantno,
+	     </if>
+	     <if test="acquirerno != null">
+	       acquirerno,
+	     </if>
+	     <if test="serialno != null">
+	       serialno,
+	     </if>
+	     <if test="status != null">
+	       status,
+	     </if>
+	     <if test="orderid != null">
+	       orderid,
+	     </if>
+	     <if test="givetime != null">
+	       givetime,
+	     </if>
+	     <if test="receivetime != null">
+	       receivetime,
+	     </if>
+	     <if test="deadlinetime != null">
+	       deadlinetime,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="updatetime != null">
+	       updatetime,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       #{id,jdbcType=VARCHAR},
+	     </if>
+	     <if test="marketingid != null">
+	       #{marketingid,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="channelid != null">
+	       #{channelid,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="ticketid != null">
+	       #{ticketid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="uid != null">
+	       #{uid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="lotterycode != null">
+	       #{lotterycode,jdbcType=VARCHAR},
+	     </if>
+	     <if test="issueno != null">
+	       #{issueno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="betdetail != null">
+	       #{betdetail,jdbcType=VARCHAR},
+	     </if>
+	     <if test="stationno != null">
+	       #{stationno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="stationprovince != null">
+	       #{stationprovince,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantno != null">
+	       #{merchantno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirerno != null">
+	       #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="serialno != null">
+	       #{serialno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="status != null">
+	       #{status,jdbcType=VARCHAR},
+	     </if>
+	     <if test="orderid != null">
+	       #{orderid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="givetime != null">
+	       #{givetime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="receivetime != null">
+	       #{receivetime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="deadlinetime != null">
+	       #{deadlinetime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="updatetime != null">
+	       #{updatetime,jdbcType=TIMESTAMP},
+	     </if>
+	   </trim>
+	</insert>
+    
+    <!-- 修改赠送记录 -->
+	<update id="modifyLotteryGivingRecord" parameterType="com.hui10.app.model.marketing.LotteryGivingRecordInfo">
+	   update <include refid="record" />
+	   	  <set>
+		     <if test="orderid != null">
+		       orderid = #{orderid,jdbcType=VARCHAR},
+		     </if>
+		     <if test="betdetail != null">
+		       betdetail = #{betdetail,jdbcType=VARCHAR},
+		     </if>
+		     <if test="status != null">
+		       status = #{status,jdbcType=VARCHAR},
+		     </if>
+		     <if test="receivetime != null">
+		       receivetime = #{receivetime,jdbcType=TIMESTAMP},
+		     </if>
+		     <if test="updatetime != null">
+		       updatetime = #{updatetime,jdbcType=TIMESTAMP},
+		     </if>
+		  </set>
+	   where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 查询赠送记录详情 -->
+    <select id="queryLotteryGivingRecord" resultType="com.hui10.app.model.marketing.LotteryGivingRecordInfo">
+        select
+          	<include refid="columns" />
+        from
+            <include refid="record"/>
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="updateExpireTickets">
+    		update
+    		<include refid="record"/>
+    		set status = '3'
+		where now() <![CDATA[>]]>  deadlinetime and status = '1'   
+    </update>
+    
+    <!-- 查询赠送记录列表 -->
+    <select id="queryLotteryGivingRecordList" resultType="com.hui10.app.model.marketing.LotteryGivingRecordInfo">
+        select
+          	<include refid="columns" />
+        from
+            <include refid="record"/>
+        where marketingid = #{marketingid,jdbcType=VARCHAR}
+          and status = '2'
+    </select>
+    
+    <update id="updateGivingRecord">
+    		update <include refid="record"/> 
+    		set betdetail = #{betdetail}, orderid = #{orderid}, receivetime = now(), status = '2'
+    		where uid = #{uid} and id = #{recordid}
+    </update>
+    
+    <update id="updateGivingRecordAndMarketing">
+    		update <include refid="marketing"/> marketing, <include refid="record"/> record
+    		set record.betdetail = #{betdetail}, record.orderid = #{orderid}, record.receivetime = now(), record.status = '2',
+    		marketing.receivenum = marketing.receivenum + 1
+    		where marketing.marketingid = record.marketingid and record.uid = #{uid} and record.id = #{recordid} and marketing.receivenum = #{receivenum}
+    </update>
+    
+    <update id="updateGivingRecordStatus">
+    		update <include refid="record"/>
+    		set status = #{status}
+    		where id = #{recordid}
+    </update>
+    
+    <select id="findNotReceivedRecords" resultType="com.hui10.app.model.marketing.LotteryGivingRecordInfo">
+    		select *
+    		from
+		<include refid="record"/>
+		where 
+		uid = #{uid} and status = '1' and now() <![CDATA[<=]]> deadlinetime
+    </select>
+    
+    <select id="findReceivedLotteries" resultType="com.hui10.app.model.marketing.LotteryReceiveRecordInfo">
+    		select record.givetime, record.receivetime, record.betdetail, hui.status, hui.lotterystatus, hui.winstatus, hui.orderid,
+    		hui.prizelevel, hui.winprize, hui.sendprize, hui.bonusstatus
+    		from
+    		<include refid="record"/> record
+    		join
+    		<include refid="huiorder"/> hui
+    		on
+    		record.orderid = hui.orderid
+    		
+    		where record.uid = #{uid} and record.status = '2' and hui.ordertype = '2'
+    		<if test="winstatus != null">
+	    		and winstatus = #{winstatus}
+	    	</if>
+    		order by receivetime desc
+    		limit #{index}, #{offset}
+    </select>
+    
+    <select id="findReceivedLotteriesCount" resultType="java.lang.Integer">
+    		select count(1)
+    		from
+    		<include refid="record"/> record
+    		join
+    		<include refid="huiorder"/> hui
+    		on
+    		record.orderid = hui.orderid
+    		
+    		where record.uid = #{uid} and record.status = '2' and hui.ordertype = '2'
+    </select>
+</mapper>

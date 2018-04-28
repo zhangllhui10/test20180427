@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.user.MediumHandleDao">
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.user.MediumHandle">
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="uid" jdbcType="VARCHAR" property="uid" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="orderid" jdbcType="VARCHAR" property="orderid" />
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+		<result column="department" jdbcType="VARCHAR" property="department" />
+		<result column="position" jdbcType="VARCHAR" property="position" />
+		<result column="handler" jdbcType="VARCHAR" property="handler" />
+		<result column="syshandler" jdbcType="VARCHAR" property="syshandler" />
+		<result column="bankno" jdbcType="VARCHAR" property="bankno" />
+		<result column="bankname" jdbcType="VARCHAR" property="bankname" />
+		<result column="faceside" jdbcType="LONGVARBINARY" property="faceside" />
+		<result column="backside" jdbcType="LONGVARBINARY" property="backside" />
+		<result column="screenshort" jdbcType="LONGVARBINARY" property="screenshort" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		handle.id, handle.uid,handle.name,handle.orderid,handle.status,handle.createtime,handle.updatetime,handle.department,handle.position,handle.handler,handle.
+		syshandler,handle.bankno,handle.bankname,handle.faceside,handle.backside,handle.screenshort
+	</sql>
+	<sql id="table">hui_app_user_winorder_medium_handle</sql>
+
+	<select id="queryHandles" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="table" />
+		handle
+		JOIN hui_app_lottery_order lottery_order ON handle.orderid=lottery_order.orderid AND
+		handle.uid=#{uid} AND handle.orderid=#{orderid} AND lottery_order.bonusstatus=5 AND
+		handle.status!='2'
+	</select>
+
+	<select id="getById" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="table" />
+		handle where handle.id = #{id}
+	</select>
+
+	<insert id="saveMediumHandle" parameterType="com.hui10.app.model.user.MediumHandle">
+		insert into hui_app_user_winorder_medium_handle
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="orderid != null">
+				orderid,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+			<if test="updatetime != null">
+				updatetime,
+			</if>
+			<if test="department != null">
+				department,
+			</if>
+			<if test="position != null">
+				position,
+			</if>
+			<if test="handler != null">
+				handler,
+			</if>
+			<if test="syshandler != null">
+				syshandler,
+			</if>
+			<if test="bankno != null">
+				bankno,
+			</if>
+			<if test="bankname != null">
+				bankname,
+			</if>
+			<if test="faceside != null">
+				faceside,
+			</if>
+			<if test="backside != null">
+				backside,
+			</if>
+			<if test="screenshort != null">
+				screenshort,
+			</if>
+			<if test="idcardno != null">
+				idcardno,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="uid != null">
+				#{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="orderid != null">
+				#{orderid,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="department != null">
+				#{department,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				#{position,jdbcType=VARCHAR},
+			</if>
+			<if test="handler != null">
+				#{handler,jdbcType=VARCHAR},
+			</if>
+			<if test="syshandler != null">
+				#{syshandler,jdbcType=VARCHAR},
+			</if>
+			<if test="bankno != null">
+				#{bankno,jdbcType=VARCHAR},
+			</if>
+			<if test="bankname != null">
+				#{bankname,jdbcType=VARCHAR},
+			</if>
+			<if test="faceside != null">
+				#{faceside,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="backside != null">
+				#{backside,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="screenshort != null">
+				#{screenshort,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="idcardno != null">
+				#{idcardno,jdbcType=LONGVARBINARY},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateMediumHandle" parameterType="com.hui10.app.model.user.MediumHandle">
+		update hui_app_user_winorder_medium_handle
+		<set>
+			<if test="id != null">
+				id = #{id,jdbcType=VARCHAR},
+			</if>
+			<if test="uid != null">
+				uid = #{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="orderid != null">
+				orderid = #{orderid,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				createtime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				updatetime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="department != null">
+				department = #{department,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				position = #{position,jdbcType=VARCHAR},
+			</if>
+			<if test="handler != null">
+				handler = #{handler,jdbcType=VARCHAR},
+			</if>
+			<if test="syshandler != null">
+				syshandler = #{syshandler,jdbcType=VARCHAR},
+			</if>
+			<if test="bankno != null">
+				bankno = #{bankno,jdbcType=VARCHAR},
+			</if>
+			<if test="bankname != null">
+				bankname = #{bankname,jdbcType=VARCHAR},
+			</if>
+			<if test="faceside != null">
+				faceside = #{faceside,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="backside != null">
+				backside = #{backside,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="screenshort != null">
+				screenshort = #{screenshort,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="idcardno != null">
+				idcardno = #{idcardno,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+</mapper>

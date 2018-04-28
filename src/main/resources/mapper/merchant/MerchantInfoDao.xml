@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.merchant.MerchantInfoDao">
+
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.merchant.MerchantApply">
+	    <id column="applyid" jdbcType="VARCHAR" property="applyid" />
+	    <result property="merchantid" jdbcType="VARCHAR" column="merchantid"/>
+	    <result property="salestatus" jdbcType="VARCHAR" column="salestatus"/>
+	    <result property="auditstatus" jdbcType="VARCHAR" column="auditstatus"/>
+	    <result property="auditreason" jdbcType="VARCHAR" column="auditreason"/>
+	    <result property="lotterystatus" jdbcType="VARCHAR" column="lotterystatus"/>
+	    <result property="lotteryreason" jdbcType="VARCHAR" column="lotteryreason"/>
+	    <result property="paycommission" jdbcType="FLOAT" column="paycommission"/>
+	    <result property="cardrate" jdbcType="FLOAT" column="cardrate"/>
+	    <result property="formphoto" jdbcType="VARCHAR" column="formphoto"/>
+	    <result property="protocolname" jdbcType="VARCHAR" column="protocolname"/>
+	    <result property="protocolno" jdbcType="VARCHAR" column="protocolno"/>
+	    <result property="starttime" jdbcType="TIMESTAMP" column="starttime"/>
+	    <result property="endtime" jdbcType="TIMESTAMP" column="endtime"/>
+	    <result property="protocolphoto" jdbcType="VARCHAR" column="protocolphoto"/>
+	    <result property="createtime" jdbcType="TIMESTAMP" column="createtime"/>
+	    <result property="creater" jdbcType="VARCHAR" column="creater"/>
+	    <result property="modifytime" jdbcType="TIMESTAMP" column="modifytime"/>
+	    <result property="modifier" jdbcType="VARCHAR" column="modifier"/>
+	    <result property="merchantname" jdbcType="VARCHAR" column="merchantname"/>
+	    <result property="merchantno" jdbcType="VARCHAR" column="merchantno"/>	    
+	    <result property="merchantshort" jdbcType="VARCHAR" column="merchantshort"/>
+	    <result property="provinceid" jdbcType="VARCHAR" column="provinceid"/>
+	    <result property="provincename" jdbcType="VARCHAR" column="provincename"/>
+	    <result property="cityid" jdbcType="VARCHAR" column="cityid"/>
+	    <result property="cityname" jdbcType="VARCHAR" column="cityname"/>
+	    <result property="address" jdbcType="VARCHAR" column="address"/>
+	    <result property="industryno" jdbcType="VARCHAR" column="industryno"/>
+	    <result property="industryname" jdbcType="VARCHAR" column="industryname"/>
+	    <result property="contactperson" jdbcType="VARCHAR" column="contactperson"/>
+	    <result property="contactnumber" jdbcType="VARCHAR" column="contactnumber"/>
+	    <result property="legalperson" jdbcType="VARCHAR" column="legalperson"/>
+	    <result property="legalnumber" jdbcType="VARCHAR" column="legalnumber"/>
+	    <result property="legaladdress" jdbcType="VARCHAR" column="legaladdress"/>
+	    <result property="legalphoto" jdbcType="VARCHAR" column="legalphoto"/>
+	    <result property="bankaccount" jdbcType="VARCHAR" column="bankaccount"/>
+	    <result property="accountname" jdbcType="VARCHAR" column="accountname"/>
+	    <result property="acquirerno" jdbcType="VARCHAR" column="acquirerno"/>
+	    <result property="acquirername" jdbcType="VARCHAR" column="acquirername"/>
+	    <result property="stationno" jdbcType="VARCHAR" column="stationno"/>
+	    <result property="bankname" jdbcType="VARCHAR" column="bankname"/>
+	    <result property="bankcode" jdbcType="VARCHAR" column="bankcode"/>
+	    <result property="branchname" jdbcType="VARCHAR" column="branchname"/>
+	    <result property="branchcode" jdbcType="VARCHAR" column="branchcode"/>
+	    <result property="paymerchantno" jdbcType="VARCHAR" column="paymerchantno"/>  
+	    <result property="accounttype" jdbcType="VARCHAR" column="accounttype"/>  
+	    <result property="financephone" jdbcType="VARCHAR" column="financephone"/>   
+	    <collection property="lotterylist" ofType="com.hui10.app.model.merchant.MerchantLottery" column="lotterycode">
+	      <id property="lotterycode" jdbcType="VARCHAR" column="lotterycode"/>
+	      <result property="lotteryname" jdbcType="VARCHAR" column="lotteryname"/>
+	      <result property="merchantprop" jdbcType="FLOAT" column="merchantprop"/>
+	    </collection>
+	</resultMap>
+
+	<!-- 渠道商户信息表 -->
+	<sql id="info_tbname">hui_app_merchant_info</sql>
+	
+	<!-- 渠道商户入网申请信息表 -->
+	<sql id="apply_tbname">hui_app_merchant_apply</sql>
+	
+	<!-- 渠道商户销售彩票信息表 -->
+	<sql id="lottery_tbname">hui_app_merchant_lottery</sql>
+	
+	<!-- 渠道商户POS终端信息表 -->
+	<sql id="terminal_tbname">hui_app_merchant_terminal</sql>
+		
+	<sql id="info_columns">
+		merchantid, merchantno, merchantname, merchantshort, provinceid, provincename, cityid, cityname, address, 
+		industryno, industryname, contactperson, contactnumber, legalperson, legalnumber, legaladdress, legalphoto, 
+		bankaccount, accountname, acquirerno, stationno, status, createtime, creater, modifytime, modifier,
+		bankname,bankcode,branchname,branchcode,paymerchantno,accounttype,financephone
+	</sql>
+	
+	<sql id="apply_info_columns">
+		a.applyid, a.merchantid, a.salestatus, a.auditstatus, a.lotterystatus, a.auditreason, a.lotteryreason, a.paycommission, 
+		a.cardrate, a.formphoto, a.protocolname, a.protocolno, a.starttime, a.endtime, a.protocolphoto, a.createtime, a.creater, 
+		a.modifytime, a.modifier,
+		b.merchantno, b.paymerchantno, b.merchantname, b.merchantshort, b.provinceid, b.provincename, b.cityid, b.cityname, b.address, 
+		b.industryno, b.industryname, b.contactperson, b.contactnumber,b.legalperson, b.legalnumber, b.legaladdress, b.legalphoto, 
+		b.bankaccount, b.accountname, b.bankname, b.bankcode, b.branchname, b.branchcode, b.acquirerno, b.stationno,b.accounttype,b.financephone
+	</sql>
+	
+	<sql id="applylist_result_columns">
+		c.applyid, c.merchantid, c.salestatus, c.auditstatus, c.lotterystatus, c.auditreason, c.lotteryreason, c.paycommission, 
+		c.cardrate, c.formphoto, c.protocolname, c.protocolno, c.starttime, c.endtime, c.protocolphoto, c.createtime, c.creater, 
+		c.modifytime, c.modifier,
+		c.merchantno, c.paymerchantno, c.merchantname, c.merchantshort, c.provinceid, c.provincename, c.cityid, c.cityname, c.address, 
+		c.industryno, c.industryname, c.contactperson, c.contactnumber,c.legalperson, c.legalnumber, c.legaladdress, c.legalphoto, 
+		c.bankaccount, c.accountname, c.bankname, c.bankcode, c.branchname, c.branchcode, c.acquirerno, c.stationno, 
+		d.lotterycode, d.lotteryname, d.merchantprop,
+		e.acquirername
+	</sql>
+	
+	<sql id="applyinfo_result_columns">
+		a.applyid, a.merchantid, a.salestatus, a.auditstatus, a.lotterystatus, a.auditreason, a.lotteryreason, a.paycommission, 
+		a.cardrate, a.formphoto, a.protocolname, a.protocolno, a.starttime, a.endtime, a.protocolphoto, a.createtime, a.creater, 
+		a.modifytime, a.modifier,
+		b.merchantno, b.paymerchantno, b.merchantname, b.merchantshort, b.provinceid, b.provincename, b.cityid, b.cityname, b.address, 
+		b.industryno, b.industryname, b.contactperson, b.contactnumber,b.legalperson, b.legalnumber, b.legaladdress, b.legalphoto, 
+		b.bankaccount, b.accountname, b.bankname, b.bankcode, b.branchname, b.branchcode, b.acquirerno, b.stationno,b.accounttype,b.financephone,
+		c.lotterycode, c.lotteryname, c.merchantprop,
+		d.acquirername
+	</sql>
+	
+	<!-- 新增渠道商户 -->
+	<insert id="addMerchant" parameterType="com.hui10.app.model.merchant.MerchantInfo">
+	   insert <include refid="info_tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="merchantid != null">
+	       merchantid,
+	     </if>
+	     <if test="merchantno != null">
+	       merchantno,
+	     </if>
+	     <if test="merchantname != null">
+	       merchantname,
+	     </if>
+	     <if test="merchantshort != null">
+	       merchantshort,
+	     </if>
+	     <if test="provinceid != null">
+	       provinceid,
+	     </if>
+	     <if test="provincename != null">
+	       provincename,
+	     </if>
+	     <if test="cityid != null">
+	       cityid,
+	     </if>
+	     <if test="cityname != null">
+	       cityname,
+	     </if>
+	     <if test="address != null">
+	       address,
+	     </if>
+	     <if test="industryno != null">
+	       industryno,
+	     </if>
+	     <if test="industryname != null">
+	       industryname,
+	     </if>
+	     <if test="contactperson != null">
+	       contactperson,
+	     </if>
+	     <if test="contactnumber != null">
+	       contactnumber,
+	     </if>
+	     <if test="legalperson != null">
+	       legalperson,
+	     </if>
+	     <if test="legalnumber != null">
+	       legalnumber,
+	     </if>
+	     <if test="legaladdress != null">
+	       legaladdress,
+	     </if>
+	     <if test="legalphoto != null">
+	       legalphoto,
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount,
+	     </if>
+	     <if test="accountname != null">
+	       accountname,
+	     </if>
+	     <if test="acquirerno != null">
+	       acquirerno,
+	     </if>
+	     <if test="status != null">
+	       status,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="creater != null">
+	       creater,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	     <if test="bankname!= null">
+	       bankname,
+	     </if>
+	     <if test="bankcode != null">
+	       bankcode,
+	     </if>
+	     <if test="branchname != null">
+	       branchname,
+	     </if>
+	     <if test="branchcode != null">
+	       branchcode,
+	     </if>
+	     <if test="paymerchantno != null">
+	       paymerchantno,
+	     </if>
+	      <if test="accounttype != null">
+	       accounttype,
+	     </if>
+	      <if test="financephone != null">
+	       financephone,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="merchantid != null">
+	       #{merchantid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantno != null">
+	       #{merchantno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantname != null">
+	       #{merchantname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantshort != null">
+	       #{merchantshort,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provinceid != null">
+	       #{provinceid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provincename != null">
+	       #{provincename,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cityid != null">
+	       #{cityid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cityname != null">
+	       #{cityname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="address != null">
+	       #{address,jdbcType=VARCHAR},
+	     </if>
+	     <if test="industryno != null">
+	       #{industryno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="industryname != null">
+	       #{industryname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="contactperson != null">
+	       #{contactperson,jdbcType=VARCHAR},
+	     </if>
+	     <if test="contactnumber != null">
+	       #{contactnumber,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalperson != null">
+	       #{legalperson,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalnumber != null">
+	       #{legalnumber,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legaladdress != null">
+	       #{legaladdress,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalphoto != null">
+	       #{legalphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankaccount != null">
+	       #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirerno != null">
+	       #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="stationno != null">
+	       #{stationno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="status != null">
+	       #{status,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="creater != null">
+	       #{creater,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankname != null">
+	       #{bankname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankcode != null">
+	       #{bankcode,jdbcType=VARCHAR},
+	     </if>
+	     <if test="branchname != null">
+	       #{branchname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="branchcode != null">
+	       #{branchcode,jdbcType=VARCHAR},
+	     </if>
+	     <if test="paymerchantno != null">
+	       #{paymerchantno,jdbcType=VARCHAR},
+	     </if>
+	       <if test="accounttype != null">
+	       #{accounttype,jdbcType=VARCHAR},
+	     </if>
+	       <if test="financephone != null">
+	       #{financephone,jdbcType=VARCHAR},
+	     </if>
+	   </trim>
+	 </insert>
+	 	
+	<!-- 修改渠道商户 -->
+	<update id="modifyMerchant" parameterType="com.hui10.app.model.merchant.MerchantInfo">
+	   update <include refid="info_tbname" />
+	   <set>
+	     <if test="merchantno != null">
+	       merchantno = #{merchantno,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="merchantname != null">
+	       merchantname = #{merchantname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantshort != null">
+	       merchantshort = #{merchantshort,jdbcType=VARCHAR},
+	     </if>
+	     <if test="provinceid != null">
+	       provinceid = #{provinceid,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="provincename != null">
+	       provincename = #{provincename,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cityid != null">
+	       cityid = #{cityid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cityname != null">
+	       cityname = #{cityname,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="address != null">
+	       address = #{address,jdbcType=VARCHAR},
+	     </if>
+	     <if test="industryno != null">
+	       industryno = #{industryno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="industryname != null">
+	       industryname = #{industryname,jdbcType=VARCHAR},
+	     </if>	     
+	     <if test="contactperson != null">
+	       contactperson = #{contactperson,jdbcType=VARCHAR},
+	     </if>
+	     <if test="contactnumber != null">
+	       contactnumber = #{contactnumber,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalperson != null">
+	       legalperson = #{legalperson,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalnumber != null">
+	       legalnumber = #{legalnumber,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legaladdress != null">
+	       legaladdress = #{legaladdress,jdbcType=VARCHAR},
+	     </if>
+	     <if test="legalphoto != null">
+	       legalphoto = #{legalphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="bankaccount != null">
+	       bankaccount = #{bankaccount,jdbcType=VARCHAR},
+	     </if>
+	     <if test="accountname != null">
+	       accountname = #{accountname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="acquirerno != null">
+	       acquirerno = #{acquirerno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="stationno != null">
+	       stationno = #{stationno,jdbcType=VARCHAR},
+	     </if>     
+	     <if test="status != null">
+	       status = #{status,jdbcType=VARCHAR},
+	     </if>     
+	     <if test="modifytime != null">
+	       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       modifier = #{modifier,jdbcType=VARCHAR},
+	     </if>
+	     <if test="status != null">
+	       status = #{status,jdbcType=VARCHAR},
+	     </if>
+	      <if test="bankname != null">
+	        bankname= #{bankname,jdbcType=VARCHAR},
+	     </if>
+	      <if test="bankcode != null">
+	        bankcode= #{bankcode,jdbcType=VARCHAR},
+	     </if>
+	      <if test="branchname != null">
+	        branchname= #{branchname,jdbcType=VARCHAR},
+	     </if>
+	      <if test="branchcode != null">
+	        branchcode= #{branchcode,jdbcType=VARCHAR},
+	     </if>
+	      <if test="paymerchantno != null">
+	        paymerchantno= #{paymerchantno,jdbcType=VARCHAR},
+	     </if>
+	      <if test="accounttype != null">
+	        accounttype= #{accounttype,jdbcType=VARCHAR},
+	     </if>
+	      <if test="financephone != null">
+	       financephone = #{financephone,jdbcType=VARCHAR},
+	     </if>
+	  </set>
+	  where merchantid = #{merchantid,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 查询商户总数 -->
+	<select id="queryMerchantCount" parameterType="java.util.Map" resultType="int">
+	    select count(*)
+		  from <include refid="info_tbname" />
+		 where 1=1
+		 <if test="acquirerno != null">
+	       and acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	     </if>
+	     <if test="merchantname != null">
+	       and merchantname LIKE CONCAT('%',#{merchantname},'%')
+	     </if>
+	</select>
+	
+	<!-- 查询pos商户列表 -->
+	<select id="queryMerchantList" parameterType="java.util.Map" resultType="com.hui10.app.model.merchant.MerchantInfo">
+	    select b.merchantid, 
+		       b.merchantno, 
+		       b.merchantname, 
+		       b.merchantshort, 
+		       b.provinceid, 
+		       b.provincename, 
+		       b.cityid, 
+	  	   	   b.cityname, 
+			   b.address, 
+		 	   b.industryno, 
+			   b.industryname, 
+			   b.contactperson, 
+			   b.contactnumber,
+			   b.legalperson, 
+			   b.legalnumber, 
+			   b.legaladdress, 
+			   b.legalphoto, 
+			   b.bankaccount, 
+			   b.accountname, 
+			   b.acquirerno, 
+			   b.stationno,
+			   b.financephone,
+			   b.accounttype,
+			   (select count(*) from hui_app_merchant_terminal a where a.merchantid = b.merchantid) as terminalcount
+		  from hui_app_merchant_info b
+		 where 1=1
+		 <if test="acquirerno != null">
+	       and acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	     </if>
+	     <if test="merchantname != null">
+	       and merchantname LIKE CONCAT('%',#{merchantname},'%')
+	     </if>
+    	 order by modifytime Desc limit #{startnum},#{pagesize}
+	</select>
+	
+	<!-- 搜索商户列表 -->
+	<select id="searchMerchantList" parameterType="java.util.Map" resultType="com.hui10.app.model.merchant.MerchantInfo">
+	    select <include refid="info_columns" />
+		  from <include refid="info_tbname" />
+		 where 1=1
+		 <if test="acquirerno != null">
+	       and acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	     </if>
+	     <if test="merchantname != null">
+	       and merchantname LIKE CONCAT('%',#{merchantname},'%')
+	     </if>
+    	 order by merchantname asc 
+	</select>
+	
+	<!-- 查询商户详情 -->
+	<select id="queryMerchantInfo" parameterType="java.lang.String" resultType="com.hui10.app.model.merchant.MerchantInfo">
+	    select <include refid="info_columns" />
+		  from <include refid="info_tbname" />
+		 where merchantno = #{merchantno,jdbcType=VARCHAR}
+	</select>	
+	
+	<!-- 校验商户信息是否已存在 -->
+	<select id="VerifyMerchantInfo" parameterType="java.util.Map" resultType="com.hui10.app.model.merchant.MerchantInfo">
+	    select <include refid="info_columns" />
+		  from <include refid="info_tbname" />
+		 where merchantname = #{merchantname,jdbcType=VARCHAR}
+		   and provinceid = #{provinceid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 新增渠道商户入网申请 -->
+	<insert id="addMerchantApply" parameterType="com.hui10.app.model.merchant.MerchantApply">
+	   insert <include refid="apply_tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="applyid != null">
+	       applyid,
+	     </if>
+	     <if test="merchantid != null">
+	       merchantid,
+	     </if>
+	     <if test="salestatus != null">
+	       salestatus,
+	     </if>
+	     <if test="auditstatus != null">
+	       auditstatus,
+	     </if>
+	     <if test="lotterystatus != null">
+	       lotterystatus,
+	     </if>
+	     <if test="auditreason != null">
+	       auditreason,
+	     </if>
+	     <if test="lotteryreason != null">
+	       lotteryreason,
+	     </if>
+	     <if test="cardrate != null">
+	       cardrate,
+	     </if>
+	     <if test="paycommission != null">
+	       paycommission,
+	     </if>
+	     <if test="formphoto != null">
+	       formphoto,
+	     </if>
+	     <if test="protocolname != null">
+	       protocolname,
+	     </if>
+	     <if test="protocolno != null">
+	       protocolno,
+	     </if>
+	     <if test="starttime != null">
+	       starttime,
+	     </if>
+	     <if test="endtime != null">
+	       endtime,
+	     </if>
+	     <if test="protocolphoto != null">
+	       protocolphoto,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="creater != null">
+	       creater,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="applyid != null">
+	       #{applyid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="merchantid != null">
+	       #{merchantid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="salestatus != null">
+	       #{salestatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditstatus != null">
+	       #{auditstatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="lotterystatus != null">
+	       #{lotterystatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditreason != null">
+	       #{auditreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="lotteryreason != null">
+	       #{lotteryreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cardrate != null">
+	       #{cardrate,jdbcType=FLOAT},
+	     </if>
+	     <if test="paycommission != null">
+	       #{paycommission,jdbcType=FLOAT},
+	     </if>
+	     <if test="formphoto != null">
+	       #{formphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolname != null">
+	       #{protocolname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolno != null">
+	       #{protocolno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="starttime != null">
+	       #{starttime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="endtime != null">
+	       #{endtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="protocolphoto != null">
+	       #{protocolphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="creater != null">
+	       #{creater,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	   </trim>
+	 </insert>
+
+	<!-- 修改渠道商户入网申请 -->
+	<update id="modifyMerchantApply" parameterType="com.hui10.app.model.merchant.MerchantApply">
+	   update <include refid="apply_tbname" />
+	   <set>
+	     <if test="merchantid != null">
+	       merchantid = #{merchantid,jdbcType=VARCHAR},
+	     </if>
+	     <if test="salestatus != null">
+	       salestatus = #{salestatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditstatus != null">
+	       auditstatus = #{auditstatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="lotterystatus != null">
+	       lotterystatus = #{lotterystatus,jdbcType=VARCHAR},
+	     </if>
+	     <if test="auditreason != null">
+	       auditreason = #{auditreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="lotteryreason != null">
+	       lotteryreason = #{lotteryreason,jdbcType=VARCHAR},
+	     </if>
+	     <if test="cardrate != null">
+	       cardrate = #{cardrate,jdbcType=FLOAT},
+	     </if>
+	     <if test="paycommission != null">
+	       paycommission = #{paycommission,jdbcType=FLOAT},
+	     </if>
+	     <if test="formphoto != null">
+	       formphoto = #{formphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolname != null">
+	       protocolname = #{protocolname,jdbcType=VARCHAR},
+	     </if>
+	     <if test="protocolno != null">
+	       protocolno = #{protocolno,jdbcType=VARCHAR},
+	     </if>
+	     <if test="starttime != null">
+	       starttime = #{starttime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="endtime != null">
+	       endtime = #{endtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="protocolphoto != null">
+	       protocolphoto = #{protocolphoto,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       modifier = #{modifier,jdbcType=VARCHAR},
+	     </if>
+	  </set>
+	  where applyid = #{applyid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查询渠道商户入网申请总数 -->
+	<select id="queryMerchantApplyCount" parameterType="java.util.Map" resultType="int">
+	    select count(*)
+		  from hui_app_merchant_apply c,hui_app_merchant_info d
+		 where c.merchantid = d.merchantid
+		 <if test="acquirerno != null">
+	       and d.acquirerno = #{acquirerno,jdbcType=VARCHAR}
+	     </if>
+	     <if test="auditstatus != null">
+	       and c.auditstatus LIKE CONCAT('%',#{auditstatus},'%')
+	     </if>
+	     <if test="lotterystatus != null">
+	       and c.lotterystatus = #{lotterystatus,jdbcType=VARCHAR}
+	     </if>
+	     <if test="salestatus != null">
+	       and c.salestatus LIKE CONCAT('%',#{salestatus},'%')
+	     </if>
+	     <if test="merchantname != null">
+	       and merchantname LIKE CONCAT('%',#{merchantname},'%')
+	     </if>
+	     <if test="protocolkey != null">
+	       and (c.protocolno LIKE CONCAT('%',#{protocolkey},'%') or c.protocolname LIKE CONCAT('%',#{protocolkey},'%'))
+	     </if>
+	</select>
+	
+	<!-- 查询渠道商户入网申请列表 -->
+	<select id="queryMerchantApplyList" parameterType="java.util.Map" resultMap="BaseResultMap">
+	    select <include refid="applylist_result_columns" /> 
+	      from (select <include refid="apply_info_columns" />
+				  from hui_app_merchant_apply a,hui_app_merchant_info b
+				 where a.merchantid = b.merchantid
+				 <if test="acquirerno != null">
+			       and b.acquirerno = #{acquirerno,jdbcType=VARCHAR}
+			     </if>
+			     <if test="auditstatus != null">
+			       and a.auditstatus LIKE CONCAT('%',#{auditstatus},'%')
+			     </if>
+			     <if test="lotterystatus != null">
+			       and a.lotterystatus = #{lotterystatus,jdbcType=VARCHAR}
+			     </if>
+			     <if test="salestatus != null">
+			       and a.salestatus LIKE CONCAT('%',#{salestatus},'%')
+			     </if>
+			     <if test="merchantname != null">
+			       and merchantname LIKE CONCAT('%',#{merchantname},'%')
+			     </if>
+			     <if test="protocolkey != null">
+			       and (a.protocolno LIKE CONCAT('%',#{protocolkey},'%') or a.protocolname LIKE CONCAT('%',#{protocolkey},'%'))
+			     </if>
+			     order by a.modifytime desc limit #{startnum},#{pagesize}
+			    ) as c join hui_app_merchant_lottery d on c.applyid = d.applyid
+			    left join hui_app_acquirer_info e on c.acquirerno = e.acquirerno
+	</select>
+	
+	<!-- 查询渠道商户入网申请详情 -->
+	<select id="queryMerchantApplyInfo" parameterType="java.util.Map" resultMap="BaseResultMap">
+	    select <include refid="applyinfo_result_columns" />
+		  from hui_app_merchant_apply a
+			   join hui_app_merchant_info b on a.merchantid = b.merchantid
+			   join hui_app_merchant_lottery c on a.applyid = c.applyid
+			   left join hui_app_acquirer_info d on b.acquirerno = d.acquirerno
+		 where a.applyid = #{applyid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 校验渠道商户入网申请是否已存在 -->
+	<select id="VerifyMerchantApply" parameterType="java.util.Map" resultType="int">
+		select count(*)
+		  from hui_app_merchant_apply a, hui_app_merchant_lottery b, hui_app_merchant_info c
+		 where a.applyid = b.applyid and a.merchantid = c.merchantid
+		   and a.merchantid = #{merchantid,jdbcType=VARCHAR}
+		   and a.protocolno = #{protocolno,jdbcType=VARCHAR}
+	       and c.provinceid = #{provinceid,jdbcType=VARCHAR}
+	       and b.lotterycode in (
+	       <foreach collection="lotterys" item="lottery" index="index"	separator=",">
+	   	 	   #{lottery.lotterycode}
+	   	   </foreach>
+	       )
+	       <if test="applyid != null">
+		   	   <![CDATA[
+	       	  	 and a.applyid <> #{applyid,jdbcType=VARCHAR}
+	       	   ]]>
+	       </if>
+	</select>
+	
+	<!-- 新增商户销售彩票关联信息 -->
+	<insert id="addMerchantLotterys">
+	   insert hui_app_merchant_lottery
+	   (
+	   	 id, applyid, merchantid, lotterycode, lotteryname, merchantprop
+	   )
+	   values
+	   <foreach collection="lotterys" item="lottery" index="index"	separator=",">
+	   (
+	   	 #{lottery.id},#{lottery.applyid},#{lottery.merchantid},#{lottery.lotterycode},#{lottery.lotteryname},#{lottery.merchantprop}
+	   )
+	   </foreach>
+	</insert>
+	 
+	<!-- 删除商户销售彩票关联信息-->
+	<delete id="deleteMerchantLotterys" parameterType="java.lang.String">
+	    delete from hui_app_merchant_lottery where applyid = #{applyid,jdbcType=VARCHAR}
+  	</delete>
+  	
+  
+  	
+  	<select id="queryMerchantInfoAndHschannel" resultType="java.util.Map">
+
+
+		SELECT
+			  mcinfo.stationno stationno,hschannel.acquirerno acquirerno,hschannel.provinceid stationprovince,hschannel.channelmercid channelmercid
+		FROM
+				hui_app_merchant_info mcinfo LEFT  JOIN  hui_app_acquirer_hschannel hschannel ON mcinfo.acquirerno=hschannel.acquirerno
+
+		WHERE mcinfo.merchantno=#{merchantno}
+
+	</select>
+	
+  <!-- 删除渠道商户POS终端信息-->
+	<delete id="deleteMerchantTerminal" parameterType="java.lang.String">
+	    delete from <include refid="terminal_tbname"/> where id = #{id,jdbcType=VARCHAR}
+  	</delete>
+  		<!-- 新增渠道商户POS终端信息 -->
+	<insert id="addMerchantTerminals">
+	   insert  <include refid="terminal_tbname"/>
+	   (
+	   	 id, merchantid, terminalno, createtime, creater, modifytime, modifier
+	   )
+	   values
+	   <foreach collection="terminals" item="terminal" index="index" separator=",">
+	   (
+	   	 #{terminal.id},#{terminal.merchantid},#{terminal.terminalno},#{terminal.createtime},#{terminal.creater},#{terminal.modifytime},#{terminal.modifier}
+	   )
+	   </foreach>
+	</insert>
+	<select id="maxStationNo" resultType="Integer">
+	select MAX(stationno) from hui_app_merchant_info where status = '1'
+	</select>
+	
+	<select id="findMerchantsNearBy" resultType="java.util.Map">
+		select merchantname,address,longitude,latitude,contactnumber,
+        round(acos(sin((#{latitude}*3.1415)/180) * sin((latitude*3.1415)/180) +cos((#{latitude}*3.1415)/180) * cos((latitude*3.1415)/180) * cos((#{longitude}*3.1415)/180 - (longitude*3.1415)/180))*6370.996*1000) AS distance
+        from 
+        <include refid="info_tbname"/>
+        WHERE status='1'
+        HAVING distance  &lt;= #{nearbydistance}
+        ORDER BY distance ASC
+	</select>
+	
+	<update id="updateLocation">
+		update 
+		<include refid="info_tbname"/>
+		set longitude = #{longitude}, latitude = #{latitude}
+		where merchantid = #{merchantid}
+	</update>
+	
+	<select id="queryMerchantByIds" resultType="com.hui10.app.model.merchant.MerchantInfo">
+		select <include refid="info_columns"/> 
+		from <include refid="info_tbname"/>
+		where merchantno in(
+		<foreach collection="list" separator="," item="item">
+		#{item}
+		</foreach>
+		)
+	</select>
+	
+	<update id="updateMerchantStationCode">
+		update
+		<include refid="info_tbname"/>
+		set
+		stationno = #{stationcode}
+		where merchantno = #{merchantno}
+	</update>
+	
+	<select id="findMerchantInfoByMerchantNo" parameterType="java.lang.String" resultType="com.hui10.app.model.merchant.MerchantInfo">
+		select *
+		from
+		<include refid="info_tbname"/>
+		where
+		merchantno = #{merchantno}	
+	</select>
+  	
+</mapper>

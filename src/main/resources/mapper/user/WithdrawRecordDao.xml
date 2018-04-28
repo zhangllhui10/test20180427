@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.user.WithdrawRecordDao">
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.user.WithdrawRecord">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="uid" jdbcType="VARCHAR" property="uid" />
+		<result column="tradeno" jdbcType="VARCHAR" property="tradeno" />
+		<result column="orderid" jdbcType="VARCHAR" property="orderid" />
+		<result column="payeeno" jdbcType="VARCHAR" property="payeeno" />
+		<result column="payeename" jdbcType="VARCHAR" property="payeename" />
+		<result column="payeebank" jdbcType="VARCHAR" property="payeebank" />
+		<result column="cash" jdbcType="DOUBLE" property="cash" />
+		<result column="fee" jdbcType="DOUBLE" property="fee" />
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">id, uid, tradeno, orderid, payeeno, payeename, payeebank, cash, fee, status, remark, createtime, updatetime</sql>
+
+	<sql id="table">hui_app_user_withdraw_record</sql>
+
+	<select id="queryDoingPayOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="table" />
+		where status=#{status}
+	</select>
+	
+	<select id="selectRecord" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="table" />
+		where id=#{id}
+	</select>
+
+	<insert id="saveRecord" parameterType="com.hui10.app.model.user.WithdrawRecord">
+		insert into
+		<include refid="table" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="tradeno != null">
+				tradeno,
+			</if>
+			<if test="orderid != null">
+				orderid,
+			</if>
+			<if test="payeeno != null">
+				payeeno,
+			</if>
+			<if test="payeename != null">
+				payeename,
+			</if>
+			<if test="payeebank != null">
+				payeebank,
+			</if>
+			<if test="cash != null">
+				cash,
+			</if>
+			<if test="fee != null">
+				fee,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+			<if test="updatetime != null">
+				updatetime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="uid != null">
+				#{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeno != null">
+				#{tradeno,jdbcType=VARCHAR},
+			</if>
+			<if test="orderid != null">
+				#{orderid,jdbcType=VARCHAR},
+			</if>
+			<if test="payeeno != null">
+				#{payeeno,jdbcType=VARCHAR},
+			</if>
+			<if test="payeename != null">
+				#{payeename,jdbcType=VARCHAR},
+			</if>
+			<if test="payeebank != null">
+				#{payeebank,jdbcType=VARCHAR},
+			</if>
+			<if test="cash != null">
+				#{cash,jdbcType=DOUBLE},
+			</if>
+			<if test="fee != null">
+				#{fee,jdbcType=DOUBLE},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateRecord" parameterType="com.hui10.app.model.user.WithdrawRecord">
+		update
+		<include refid="table" />
+		<set>
+			<if test="uid != null">
+				uid = #{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeno != null">
+				tradeno = #{tradeno,jdbcType=VARCHAR},
+			</if>
+			<if test="orderid != null">
+				orderid = #{orderid,jdbcType=VARCHAR},
+			</if>
+			<if test="payeeno != null">
+				payeeno = #{payeeno,jdbcType=VARCHAR},
+			</if>
+			<if test="payeename != null">
+				payeename = #{payeename,jdbcType=VARCHAR},
+			</if>
+			<if test="payeebank != null">
+				payeebank = #{payeebank,jdbcType=VARCHAR},
+			</if>
+			<if test="cash != null">
+				cash = #{cash,jdbcType=DOUBLE},
+			</if>
+			<if test="fee != null">
+				fee = #{fee,jdbcType=DOUBLE},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				createtime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				updatetime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.order.HuiOrderBalanceDao">
+
+    <sql id="info_column">
+        accountid, accounttime, createtime, ordertotal, orderamount, accountstatus
+    </sql>
+    
+    <sql id="detail_column">
+    		accountid, orderid, huiorderid, orderamount, huiorderamount, resource, ordertime
+    </sql>
+    
+    <sql id="info_table">hui_app_account_balance_info</sql>
+    
+    <sql id="detail_table">hui_app_account_balance_detail</sql>
+    
+    <select id="findOneInfo" parameterType="java.lang.String" resultType="com.hui10.app.model.order.OrderAccountBalanceInfo">
+    		select 
+    		<include refid="info_column"/>
+    		from
+    		<include refid="info_table"/>
+    		where accountid = #{accountid}
+    </select>
+
+    <insert id="addOneInfo" parameterType="com.hui10.app.model.order.OrderAccountBalanceInfo">
+        INSERT INTO
+        <include refid="info_table"/>
+        (
+        		<include refid="info_column"/>
+        	)
+        VALUES 
+        (
+        		#{accountid},#{accounttime},#{createtime},#{ordertotal},#{orderamount},#{accountstatus}
+        )
+    </insert>
+    
+    <insert id="addDetails" parameterType="java.util.List">
+		insert into 
+		<include refid="detail_table"/>
+		(
+			<include refid="detail_column"/>
+		)
+		values
+		<foreach collection="list" item="obj" index="index" separator=",">
+			(
+				#{obj.accountid}, #{obj.orderid}, #{obj.huiorderid}, 
+				#{obj.orderamount}, #{obj.huiorderamount}, #{obj.resource}, #{obj.ordertime}
+			)
+		</foreach>
+	</insert>
+
+	<select id="queryAccountBalanceInfo" resultType="com.hui10.app.model.order.OrderAccountBalanceInfo">
+		select 
+		<include refid="info_column"/>
+		from
+		<include refid="info_table"/>
+		where 
+		1=1
+		<if test="status != null and status != ''">
+			and accountstatus=#{status}
+		</if>
+		<if test="starttime != null and starttime != ''">
+			and accounttime <![CDATA[>=]]>#{starttime} 
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and accounttime <![CDATA[<=]]>#{endtime} 
+		</if>
+		order by createtime desc
+		limit #{index},#{offset}
+	</select>
+	
+	<select id="queryAccountBalanceInfoCount" resultType="java.lang.Integer">
+		select count(1)
+		from
+		<include refid="info_table"/>
+		where 
+		1=1
+		<if test="status != null and status != ''">
+			and accountstatus=#{status}
+		</if>
+		<if test="starttime != null and starttime != ''">
+			and accounttime <![CDATA[>=]]>#{starttime} 
+		</if>
+		<if test="endtime != null and endtime != ''">
+			and accounttime <![CDATA[<=]]>#{endtime} 
+		</if>
+	</select>
+	
+	<select id="queryAccountBalanceDetails" resultType="com.hui10.app.model.order.OrderAccountBalanceDetail">
+		select 
+		<include refid="detail_column"/>
+		from
+		<include refid="detail_table"/>
+		where
+		accountid=#{accountid}
+		order by ordertime desc
+		<if test="index != null and offset != null">
+			limit #{index},#{offset}
+		</if>
+	</select>
+	
+	<select id="queryAccountBalanceDetailsCount" resultType="java.lang.Integer">
+		select count(1)
+		from
+		<include refid="detail_table"/>
+		where
+		accountid=#{accountid}
+	</select>
+   
+</mapper>
+
+
+

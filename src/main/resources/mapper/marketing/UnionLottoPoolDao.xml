@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.UnionLottoPoolDao">
+
+  <sql id="column">
+    ticketid, betdetail, ticketstatus, marketingid, sequence
+  </sql>
+  
+  <sql id="pool">hui_app_marketing_unionlotto_pool</sql>
+  
+  <sql id="record">hui_app_marketing_lottery_giving_record</sql>
+  
+  
+  <update id="updatePoolTicketStatus" parameterType="java.lang.String">
+  		update 
+  		<include refid="pool"/>
+  		set ticketstatus = #{ticketstatus}
+		where ticketid = #{ticketid}  		
+  </update>
+  
+  <update id="updatePoolExpireTicket" parameterType="java.lang.String">
+  		update <include refid="pool"/> pool, <include refid="record"/> record
+  		set pool.ticketstatus = #{ticketstatus}, record.status = #{status}
+  		where pool.ticketid = record.ticketid and now() <![CDATA[ > ]]> record.deadlinetime and record.status = '1'
+  </update>
+  
+  <select id="pullLotteryTicket" resultType="com.hui10.app.model.marketing.UnionLottoPoolTicket">
+  	select * from 
+  	<include refid="pool"/>
+  	limit 1
+  </select>
+  
+  <insert id="addLottoTicketToPool" parameterType="com.hui10.app.model.marketing.UnionLottoPoolTicket">
+  	insert into
+  	<include refid="pool"/>
+  	(
+  		<include refid="column"/>
+  	)
+  	values
+  	<foreach collection="list" item="item" separator=",">
+	  	(
+	  		#{item.ticketid}, #{item.betdetail}, #{item.ticketstatus}, #{item.marketingid}, #{item.sequence}
+	  	
+	  	)
+  	</foreach>
+  </insert>
+  
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.banner.BannerDao">
+
+	<!-- 广告信息表 -->
+	<sql id="tbname"> hui_app_banner_info </sql>
+
+	<sql id="columns">
+		id, title, linkurl, picurl, sort, status, creator, createtime, modifier, modifytime, position
+	</sql>
+	
+	<!-- 新增广告  -->
+	<insert id="addBanner" parameterType="com.hui10.app.model.banner.BannerInfo">
+	   insert <include refid="tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       id,
+	     </if>
+	     <if test="title != null">
+	       title,
+	     </if>	     
+	     <if test="linkurl != null">
+	       linkurl,
+	     </if>
+	     <if test="picurl != null">
+	       picurl,
+	     </if>
+	     <if test="sort != null">
+	       sort,
+	     </if>
+	     <if test="status != null">
+	       status,
+	     </if>
+	     <if test="creator != null">
+	       creator,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	     <if test="position != null">
+	       position,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       #{id,jdbcType=VARCHAR},
+	     </if>
+	     <if test="title != null">
+	       #{title,jdbcType=VARCHAR},
+	     </if>
+	     <if test="linkurl != null">
+	       #{linkurl,jdbcType=VARCHAR},
+	     </if>
+	     <if test="picurl != null">
+	       #{picurl,jdbcType=VARCHAR},
+	     </if>
+	     <if test="sort != null">
+	       #{sort,jdbcType=VARCHAR},
+	     </if>
+	     <if test="status != null">
+	       #{status,jdbcType=VARCHAR},
+	     </if>
+	     <if test="creator != null">
+	       #{creator,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="position != null">
+	       #{position,jdbcType=VARCHAR},
+	     </if>
+	   </trim>
+	</insert>
+	
+	<!-- 修改广告  -->
+	<update id="modifyBanner" parameterType="com.hui10.app.model.banner.BannerInfo">
+	   update <include refid="tbname" />
+	   	  <set>
+		     <if test="title != null">
+		       title = #{title,jdbcType=VARCHAR},
+		     </if>
+		     <if test="linkurl != null">
+		       linkurl = #{linkurl,jdbcType=VARCHAR},
+		     </if>
+		     <if test="picurl != null">
+		       picurl = #{picurl,jdbcType=VARCHAR},
+		     </if>
+		     <if test="sort != null">
+		       sort = #{sort,jdbcType=VARCHAR},
+		     </if>
+		     <if test="status != null">
+		       status = #{status,jdbcType=VARCHAR},
+		     </if>
+		     <if test="modifier != null">
+		       modifier = #{modifier,jdbcType=VARCHAR},
+		     </if>
+		     <if test="modifytime != null">
+		       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+		     </if>
+		     <if test="position != null">
+		       position = #{position,jdbcType=VARCHAR},
+		     </if>
+		  </set>
+	   where id = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查询广告详情 -->
+    <select id="queryBannerInfo" resultType="com.hui10.app.model.banner.BannerInfo">
+        select
+          	<include refid="columns" />
+        from
+            <include refid="tbname"/>
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+	
+    <!-- 查询广告列表 -->
+    <select id="queryBannerList" resultType="com.hui10.app.model.banner.BannerInfo">
+       select
+          	<include refid="columns" />
+         from
+            <include refid="tbname"/>
+        where status = '1'
+        <if test="position != null">
+	      and position = #{position,jdbcType=VARCHAR}
+	    </if>
+        order by sort desc, id desc
+    </select>
+</mapper>

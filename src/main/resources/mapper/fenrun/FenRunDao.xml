@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.pc.dao.fenrun.FenRunDao">
+	
+	<!-- 查询商户上月彩票销售分润  -->
+    <select id="queryFenRunOfLastMonth" parameterType="java.lang.String" resultType="java.lang.String">
+        select round(sum(o.orderamount*l.merchantprop))
+		  from hui_app_lottery_order o,
+		       hui_app_merchant_info m,
+		       hui_app_merchant_lottery l
+		 where o.merchantno = m.merchantno
+		   and m.merchantid = l.merchantid
+		   and o.ordertype = '1'
+		   and o.status = '2'
+		   and o.merchantno = #{merchantno}
+		   and DATE_FORMAT(o.paytime,'%Y/%m') = DATE_FORMAT(DATE_SUB(SYSDATE(),INTERVAL 1 YEAR_MONTH),'%Y/%m')
+    </select>
+    
+	<!-- 查询商户彩票销售分润总额  -->
+    <select id="queryFenRunTotalAmount" parameterType="java.lang.String" resultType="java.lang.String">
+        select round(sum(o.orderamount*l.merchantprop))
+		  from hui_app_lottery_order o,
+		       hui_app_merchant_info m,
+		       hui_app_merchant_lottery l
+		 where o.merchantno = m.merchantno
+		   and m.merchantid = l.merchantid
+		   and o.ordertype = '1'
+		   and o.status = '2'
+		   and o.paytime is not null
+		   and o.merchantno = #{merchantno}
+    </select>
+	
+	<!-- 查询商户彩票销售分润列表  -->
+    <select id="queryFenRunList" parameterType="java.lang.String" resultType="com.hui10.pc.model.fenrun.FenRun">
+        select round(sum(o.orderamount*l.merchantprop)) as money, DATE_FORMAT(o.paytime,'%Y/%m') month
+		  from hui_app_lottery_order o,
+		       hui_app_merchant_info m,
+		       hui_app_merchant_lottery l
+		 where o.merchantno = m.merchantno
+		   and m.merchantid = l.merchantid
+		   and o.ordertype = '1'
+		   and o.status = '2'
+		   and o.paytime is not null
+		   and o.merchantno = #{merchantno}
+		 group by month
+         order by month desc
+    </select>
+    
+</mapper>

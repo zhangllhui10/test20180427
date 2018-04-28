@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.acquirerhschannel.AcquirerHschannelDao">
+<sql id="hschannel_colums">
+    id,acquirerno,acquirername,provinceid,provincename,channelmercid
+    </sql>
+    
+    <select id="queryHschannel" resultType="com.hui10.app.model.acquirer.AcquirerHschannel">
+    select <include refid="hschannel_colums" /> from hui_app_acquirer_hschannel where acquirerno = #{acquirerno}  and provinceid = #{provinceid}
+    </select>
+    
+    <select id="queryHschannelByMercid" resultType="com.hui10.app.model.acquirer.AcquirerHschannel">
+    select <include refid="hschannel_colums" /> from hui_app_acquirer_hschannel where channelmercid = #{channelmercid}
+    </select>
+    
+    <insert id="addHschannel">
+    insert into hui_app_acquirer_hschannel(acquirerno,acquirername,provinceid,provincename,channelmercid) values(
+    #{acquirerno},#{acquirername},#{provinceid},#{provincename},#{channelmercid} )
+    </insert>
+    <delete id="deleteHschannel">
+    delete from hui_app_acquirer_hschannel where id = #{id}
+    </delete>
+    <select id="queryHschannelById" resultType="com.hui10.app.model.acquirer.AcquirerHschannel">
+    select <include refid="hschannel_colums" /> from hui_app_acquirer_hschannel where id = #{id}
+    </select>
+    
+</mapper>
+ 

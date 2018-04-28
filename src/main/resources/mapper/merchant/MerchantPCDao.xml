@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.pc.dao.merchant.MerchantPCDao">
+	<sql id="merchant_info_columns">
+		merchantid, merchantno, merchantname, merchantshort, provinceid, provincename, cityid, cityname, address, 
+		industryno, industryname, contactperson, contactnumber, legalperson, legalnumber, legaladdress, legalphoto, 
+		bankaccount, accountname, acquirerno, stationno, status, createtime, creater, modifytime, modifier,
+		bankname,bankcode,branchname,branchcode,paymerchantno,accounttype,financephone,latitude,longitude
+	</sql>
+
+	<select id="getMerchantInfoList" resultType="MerchantInfo">
+		SELECT
+			<include refid="merchant_info_columns"></include>
+		FROM
+			hui_app_merchant_info
+		<where>
+		contactnumber = #{contactnumber}
+		AND status = '1'
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.marketing.MarketingAccessGroupDao">
+  <resultMap id="BaseResultMap" type="com.hui10.app.model.marketing.MarketingAccessGroup">
+    <id column="groupid" jdbcType="VARCHAR" property="groupid" />
+    <result column="gatewayid" jdbcType="VARCHAR" property="gatewayid" />
+    <result column="channelid" jdbcType="VARCHAR" property="channelid" />
+    <result column="merchantname" jdbcType="VARCHAR" property="merchantname" />
+    <result column="money" jdbcType="BIGINT" property="money" />
+    <result column="betnumber" jdbcType="INTEGER" property="betnumber" />
+    <result column="marketingid" jdbcType="VARCHAR" property="marketingid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    groupid, gatewayid,channelid, merchantname, money, betnumber, marketingid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing_access_group
+    where groupid = #{groupid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from hui_app_marketing_access_group
+    where groupid = #{groupid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.hui10.app.model.marketing.MarketingAccessGroup">
+    insert into hui_app_marketing_access_group (groupid, gatewayid,channelid, merchantname, 
+      money, betnumber, marketingid
+      )
+    values (#{groupid,jdbcType=VARCHAR}, #{gatewayid,jdbcType=VARCHAR},#{channelid,jdbcType=VARCHAR}, #{merchantname,jdbcType=VARCHAR}, 
+      #{money,jdbcType=BIGINT}, #{betnumber,jdbcType=INTEGER}, #{marketingid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hui10.app.model.marketing.MarketingAccessGroup">
+    insert into hui_app_marketing_access_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="groupid != null">
+        groupid,
+      </if>
+      <if test="gatewayid != null">
+        gatewayid,
+      </if>
+      <if test="channelid != null">
+        channelid,
+      </if>
+      <if test="merchantname != null">
+        merchantname,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="betnumber != null">
+        betnumber,
+      </if>
+      <if test="marketingid != null">
+        marketingid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="groupid != null">
+        #{groupid,jdbcType=VARCHAR},
+      </if>
+      <if test="gatewayid != null">
+        #{gatewayid,jdbcType=VARCHAR},
+      </if>
+      <if test="channelid != null">
+        #{channelid,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantname != null">
+        #{merchantname,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=BIGINT},
+      </if>
+      <if test="betnumber != null">
+        #{betnumber,jdbcType=INTEGER},
+      </if>
+      <if test="marketingid != null">
+        #{marketingid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hui10.app.model.marketing.MarketingAccessGroup">
+    update hui_app_marketing_access_group
+    <set>
+      <if test="gatewayid != null">
+        gatewayid = #{gatewayid,jdbcType=VARCHAR},
+      </if>
+      <if test="channelid != null">
+        channelid = #{channelid,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantname != null">
+        merchantname = #{merchantname,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=BIGINT},
+      </if>
+      <if test="betnumber != null">
+        betnumber = #{betnumber,jdbcType=INTEGER},
+      </if>
+      <if test="marketingid != null">
+        marketingid = #{marketingid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where groupid = #{groupid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hui10.app.model.marketing.MarketingAccessGroup">
+    update hui_app_marketing_access_group
+    set gatewayid = #{gatewayid,jdbcType=VARCHAR},
+    	channelid = #{channelid,jdbcType=VARCHAR},
+      	merchantname = #{merchantname,jdbcType=VARCHAR},
+      	money = #{money,jdbcType=BIGINT},
+      	betnumber = #{betnumber,jdbcType=INTEGER},
+      	marketingid = #{marketingid,jdbcType=VARCHAR}
+    where groupid = #{groupid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertBatch">
+	   insert into hui_app_marketing_access_group (groupid,gatewayid, channelid, merchantname, 
+	      money, betnumber, marketingid
+	      )
+	    values 
+	    <foreach collection="list" item="item" separator=",">
+	     (#{item.groupid,jdbcType=VARCHAR},#{item.gatewayid,jdbcType=VARCHAR}, #{item.channelid,jdbcType=VARCHAR}, #{item.merchantname,jdbcType=VARCHAR}, 
+	      #{item.money,jdbcType=BIGINT}, #{item.betnumber,jdbcType=INTEGER}, #{item.marketingid,jdbcType=VARCHAR}
+	      )
+	    </foreach>
+  </insert>
+  
+  <insert id="insertBatchGroupCity">
+  	insert into hui_app_marketing_access_group_city(id,groupid,cityid)
+  	values
+	  	<foreach collection="list" separator="," item="item">
+	  	(#{item.id,jdbcType=VARCHAR},#{item.groupid,jdbcType=VARCHAR},#{item.cityid,jdbcType=VARCHAR})
+	  	</foreach>
+  </insert>
+  
+  <insert id="insertBatchGroupMerchant">
+  	insert into hui_app_marketing_access_group_merchant(id,groupid,merchantno)
+  	values
+	  	<foreach collection="list" separator="," item="item">
+	  	(#{item.id},#{item.groupid},#{item.merchantno})
+	  	</foreach>
+  </insert>
+  <select id="selectByMerchantname" resultMap="BaseResultMap">
+ 	 select 
+    <include refid="Base_Column_List" />
+    from hui_app_marketing_access_group
+    where merchantname in(
+	    <foreach collection="set" item="item" separator=",">
+	    #{item}
+	    </foreach>
+    ) 
+    <if test="marketingid != null">
+    	and marketingid != #{marketingid}
+    </if>
+  </select>
+  <delete id="deleteBatchCityByGroupId">
+  	delete from hui_app_marketing_access_group_city where  groupid in (
+  		<foreach collection="list" item="item" separator=",">
+  		#{item.groupid}
+  		</foreach>
+  	) 
+  </delete>
+  
+  <delete id="deleteBatchMerchantByGroupId">
+  	delete from hui_app_marketing_access_group_merchant where groupid in(
+  		<foreach collection="list" item="item" separator=",">
+  		#{item.groupid}
+  		</foreach>
+  	)
+  </delete>
+  
+  <delete id="deleteBatchGroupById">
+  	delete from hui_app_marketing_access_group where marketingid in(
+  		<foreach collection="list" item="item" separator=",">
+  		#{item.marketingid}
+  		</foreach>
+  	)
+  </delete>
+  
+  <delete id="deleteBatchCityByMarketingId" parameterType="String">
+  	DELETE  c  FROM hui_app_marketing_access_group_city c ,hui_app_marketing_access_group g 
+	WHERE c.groupid = g.groupid AND g.marketingid = #{marketingid} 
+  </delete>
+  
+  <delete id="deleteBatchMerchantByMarketingId" parameterType="String">
+  	DELETE  m  FROM hui_app_marketing_access_group_merchant m ,hui_app_marketing_access_group g 
+	WHERE m.groupid = g.groupid AND g.marketingid = #{marketingid} 
+  </delete>
+  
+</mapper>

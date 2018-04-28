@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.adnormalorder.AdnormalOrderDao">
+
+	<sql id="tables">hui_app_lottery_order_adnormal</sql>
+
+    <sql id="columns">
+        id, orderid, outtradeno, userphone, stationno, amount, serialno, bankcardid, status,
+	    submitter, submittime, handler, handletime, createtime, updatetime
+    </sql>
+    
+    <insert id="insert" parameterType="com.hui10.app.model.adnormalorder.AdnormalOrderInfo">
+        INSERT INTO
+        <include refid="tables"/>
+        (<include refid="columns"/>)
+        VALUES (
+        #{id},#{orderid},#{outtradeno},#{userphone},#{stationno},#{amount},#{serialno},#{bankcardid},#{status},
+        #{submitter},#{submittime},#{handler},#{handletime},#{createtime},#{updatetime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.hui10.app.model.adnormalorder.AdnormalOrderInfo">
+        UPDATE
+        <include refid="tables"/>
+        <set>
+            <if test="amount>0">
+                amount=#{amount},
+            </if>
+            <if test="bankcardid!=null">
+                bankcardid=#{bankcardid},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="handler!=null">
+                handler=#{handler},
+            </if>
+            <if test="handletime!=null">
+                handletime=#{handletime},
+            </if>
+            <if test="updatetime!=null">
+                updatetime=#{updatetime},
+            </if>
+        </set>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    
+    <select id="queryAdnormalOrderById" parameterType="java.lang.String" resultType="com.hui10.app.model.adnormalorder.AdnormalOrderInfo">
+    	select <include refid="columns"/> 
+    	  from <include refid="tables"/> 
+    	 where id = #{id} 
+    </select>
+    
+    <select id="queryAdnormalOrderByOuttradeno" parameterType="java.lang.String" resultType="com.hui10.app.model.adnormalorder.AdnormalOrderInfo">
+    	select <include refid="columns"/> 
+    	  from <include refid="tables"/> 
+    	 where outtradeno = #{outtradeno} 
+    	 limit 1
+    </select>
+    
+    <select id="queryLotteryOrderInfo" parameterType="java.lang.String" resultType="com.hui10.app.model.order.LotteryOrder">
+    	select * from hui_app_lottery_order where orderid = #{orderid} and userphone = #{userphone}
+    </select>
+
+    <select id="queryUserBankCard" parameterType="java.lang.String" resultType="com.hui10.app.model.user.UserBankCard">
+    	select b.* 
+    	  from hui_app_user_info u, 
+    	       hui_app_user_bankcard b 
+    	 where u.uid = b.uid 
+    	   and u.phone = #{userphone} 
+    	   and b.id = #{bankcardid} 
+    	 limit 1
+    </select>
+</mapper>
+
+
+

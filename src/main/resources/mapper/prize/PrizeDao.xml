@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.prize.PrizeDao">
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.order.LotteryOrder">
+		<id column="orderid" property="orderid" />
+		<result column="stationprovince" property="stationprovince" />
+		<result column="stationno" property="stationno" />
+		<result column="orderamount" property="orderamount" />
+		<result column="outtradeno" property="outtradeno" />
+		<result column="merchantno" property="merchantno" />
+		<result column="orderno" property="orderno" />
+		<result column="issuenumber" property="issuenumber" />
+		<result column="gamecode" property="gamecode" />
+		<result column="spid" property="spid" />
+		<result column="status" property="status" />
+		<result column="winstatus" property="winstatus" />
+		<result column="prizelevel" property="prizelevel" />
+		<result column="winprize" property="winprize" />
+		<result column="bonusstatus" property="bonusstatus" />
+		<result column="remark" property="remark" />
+		<result column="ordertime" property="ordertime" />
+		<result column="createdate" property="createdate" />
+		<result column="updatedate" property="updatedate" />
+		<result column="lotterytime" property="lotterytime"/>
+	</resultMap>
+
+	<sql id="lottery_order">hui_app_lottery_order</sql>
+	<sql id="lottery_order_detail">hui_app_lottery_order_detail</sql>
+	<sql id="columns">
+		orderid,stationprovince,stationno,orderamount,outtradeno,merchantno,orderno,issuenumber,gamecode,spid,status,winstatus,prizelevel,winprize,bonusstatus,remark,ordertime,createdate,updatedate,lotterytime
+	</sql>
+
+	<!-- 开奖后更新订单 -->
+	<update id="updateLotteryOrder" parameterType="com.hui10.app.model.prize.LotteryPrizeFileContent">
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">
+			update hui_app_lottery_order
+			set winstatus = '2',
+			prizelevel=#{item.prizelevel},
+			winprize=#{item.winPrize}
+			where status = '2' 
+				  and orderno=#{item.orderNo}
+		</foreach>
+	</update>
+
+	
+	<!-- 存储开奖文件信息的表 -->
+	<sql id="prizefile_info">hui_app_prizefile_info</sql>
+	<sql id="column_prizefile_info">prizefileid,gamecode,issuenumber,lotterytime,filecheckcode,status,createtime,updatetime,promotionid</sql>
+
+	<insert id="insertPrizeFile" parameterType="com.hui10.app.model.prize.LotteryPrizeFileInfo">
+		insert into
+		<include refid="prizefile_info" />
+		(
+		<include refid="column_prizefile_info"></include>
+		)values(
+		#{prizefileid},
+		#{gamecode},
+		#{issuenumber},
+		#{lotterytime},
+		#{filecheckcode},
+		#{status},
+		#{createtime},
+		#{updatetime},
+		#{promotionid})
+	</insert>
+
+	<select id="queryPrizeFileList" resultType="com.hui10.app.model.prize.LotteryPrizeFileInfo">
+		select
+		<include refid="column_prizefile_info"></include>
+		from
+		<include refid="prizefile_info"></include>
+		where status = #{status}
+	</select>
+
+	<update id="updatePrizeFile" parameterType="com.hui10.app.model.prize.LotteryPrizeFileInfo">
+		update
+		<include refid="prizefile_info" />
+		set status = #{status} 
+		,updatetime=#{updatetime}
+		where gamecode =#{gamecode} 
+		and issuenumber=#{issuenumber} 
+		and filecheckcode=#{filecheckcode}
+		<if test="promotionid != null"> and promotionid = #{promotionid}</if>
+	</update>
+
+	<select id="queryPrizeFileByCode" resultType="com.hui10.app.model.prize.LotteryPrizeFileInfo">
+		select
+		<include refid="column_prizefile_info" />
+		from
+		<include refid="prizefile_info" />
+		where gamecode=#{gamecode} and issuenumber=#{issuenumber} and filecheckcode=#{filecheckcode}
+	</select>
+	
+	
+	<select id="getPrizeAmount" parameterType="java.lang.String">
+		SELECT
+			lottery_order.winprize AS prize
+		FROM
+			<include refid="lottery_order"/> lottery_order
+		WHERE
+			lottery_order.status = '2' AND lottery_order.winstatus = '2' AND lottery_order.prizelevel = '1' AND lottery_order.bonusstatus = '1' 
+		AND lottery_order.orderid = #{orderid}
+	</select>
+	
+	<update id="updateBonusStatus">
+		UPDATE
+			<include refid="lottery_order" />
+		SET
+			<if test="sendprize != null">
+				sendprize=#{sendprize},
+			</if>
+			 bonusstatus=#{bonusstatus},updatedate=#{updatedate}
+		WHERE
+			orderid=#{orderid}
+	</update>
+
+	<select id="selectPrizeOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+			<include refid="columns" />	
+		from
+			<include refid="lottery_order" /> lottery_order
+		where (lottery_order.bonusstatus=1 OR lottery_order.bonusstatus=4 OR lottery_order.bonusstatus=6) AND lottery_order.status = '2' AND lottery_order.winstatus = '2' AND lottery_order.orderid=#{orderid} AND lottery_order.uid=#{uid}
+	</select>
+	
+	<select id="selectAuditingOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+			<include refid="columns" />	
+		from
+			<include refid="lottery_order" /> lottery_order
+		where (lottery_order.bonusstatus=5 OR lottery_order.bonusstatus=7 OR lottery_order.bonusstatus=8) AND lottery_order.status = '2' AND lottery_order.winstatus = '2' AND lottery_order.orderid=#{orderid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryPrizeCount" resultType="java.lang.Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			<include refid="lottery_order" /> lottery_order
+		WHERE (lottery_order.bonusstatus=1 OR lottery_order.bonusstatus=4 OR lottery_order.bonusstatus=6) AND lottery_order.status = '2' AND lottery_order.winstatus = '2' AND lottery_order.uid=#{uid}
+	</select>
+	
+	
+	<select id="queryOrderNoByOrderNoList" parameterType="com.hui10.app.model.prize.LotteryPrizeFileContent" resultType="String">
+		select orderno from
+		<include refid="lottery_order" />
+			where status = '2' and orderno in (
+		<foreach collection="list" index="index" item="order" separator=",">
+			#{order.orderNo}
+		</foreach>
+		)
+	</select>
+	
+	<update id="updateLotteryStatus">
+	update <include refid="lottery_order"/>
+	set lotterystatus =#{lotterystatus}
+	where issuenumber=#{issuenumber} 
+	and gamecode = #{gamecode}
+	and ordertype = #{ordertype}
+	</update>
+	
+	<!-- 开奖后更新订单 -->
+	<update id="updateUserWinamount" parameterType="com.hui10.app.model.prize.LotteryPrizeFileContent">
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">
+			update hui_app_user_info i,hui_app_lottery_order o
+			set i.wintotalamount = i.wintotalamount + #{item.winPrize}
+			where o.orderno = #{item.orderNo} and i.uid = o.uid
+		</foreach>
+	</update>
+	
+	<select id="queryInfoByOrderno" resultType="Map">
+		SELECT 	o.orderno,
+				o.orderid,
+				o.uid,
+				o.issuenumber,
+				o.gamecode
+		FROM hui_app_lottery_order AS o
+		WHERE o.orderno = #{orderno} LIMIT 1
+	</select>
+	
+	<select id="queryInfoListByOrderno" resultType="Map">
+		SELECT o.orderno,o.uid
+		FROM hui_app_lottery_order AS o
+		WHERE o.orderno in (
+		<foreach collection="list" index="index" item="item" separator=",">
+		#{item}
+		</foreach>
+		)
+	</select>
+	
+	<select id="queryPrizeFileByCodeAndPromotionid" resultType="com.hui10.app.model.prize.LotteryPrizeFileInfo">
+		select
+		<include refid="column_prizefile_info" />
+		from
+		<include refid="prizefile_info" />
+		where gamecode=#{gamecode} 
+		and issuenumber=#{issuenumber} 
+		and filecheckcode=#{filecheckcode}
+		and promotionid=#{promotionid}
+	</select>
+	
+</mapper>    

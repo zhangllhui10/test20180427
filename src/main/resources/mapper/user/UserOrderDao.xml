@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.user.UserOrderDao">
+	<resultMap id="BaseResultMap" type="com.hui10.app.model.user.UserOrder">
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="uid" jdbcType="VARCHAR" property="uid" />
+		<result column="orderid" jdbcType="VARCHAR" property="orderid" />
+		<result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+	</resultMap>
+	
+	<sql id="user_bankcard"> hui_app_user_order </sql>
+	<sql id="Base_Column_List">	id, uid, orderid, createtime</sql>
+
+	<select id="selectByOrderid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from <include refid="user_bankcard"/>
+		where orderid = #{orderid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryPhoneByOrderid" parameterType="java.lang.String" resultType="String">
+		SELECT	userinfo.phone	
+		FROM hui_app_user_info userinfo	JOIN hui_app_user_order userorder 
+		ON userinfo.uid = userorder.uid	AND userorder.orderid = #{orderid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="saveUserOrder" parameterType="com.hui10.app.model.user.UserOrder">
+		insert into <include refid="user_bankcard"/>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="orderid != null">
+				orderid,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="uid != null">
+				#{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="orderid != null">
+				#{orderid,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+
+</mapper>

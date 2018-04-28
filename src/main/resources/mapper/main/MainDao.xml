@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.main.MainDao">
+
+    <!-- 订单表 -->
+    <sql id="lottery_order"> hui_app_lottery_order </sql>
+    <!-- 出票信息表 -->
+    <sql id="lottery_ticket"> hui_app_lottery_ticket </sql>
+    <!-- 中等奖中奖表 -->
+    <sql id="winorder_medium"> hui_app_user_winorder_medium_handle </sql>
+    <!-- 小奖提现记录表 -->
+    <sql id="withdraw_record"> hui_app_user_withdraw_record </sql>
+    <!-- 用户信息 -->
+    <sql id="user_info"> hui_app_user_info </sql>
+    <!-- 赠送记录 -->
+    <sql id="giving_record"> hui_app_marketing_lottery_giving_record </sql>
+    <!-- 营销活动 -->
+    <sql id="marketing"> hui_app_marketing </sql>
+    <!-- 大奖申领记录 -->
+    <sql id="bigprize_handle"> hui_app_user_winorder_bigprize_handle </sql>
+
+    <select id="queryHomeOrders" resultType="com.hui10.app.model.main.HomeLottery">
+        SELECT
+          lo.orderid,lo.gamecode lotterytype,lo.issuenumber,lo.status,lo.remark,lo.lotterytime,lo.ordertype,lo.prizelevel,
+          lo.betnumber,lo.winprize,lo.lotterytime opentime,lo.lotterystatus,lo.winstatus,lo.bonusstatus,lo.ordertime
+        FROM
+          <include refid="lottery_order"/> lo
+        WHERE lo.uid = #{uid}
+        AND lo.ordertype = '1' 
+        AND (lo.status = 2 OR (lo.status = 1 AND lo.lotterytime <![CDATA[ > ]]> #{sysdate} ))
+        GROUP BY lo.orderid
+        ORDER BY lo.orderid DESC
+        LIMIT #{num}
+    </select>
+
+    <select id="queryWinOrderMedium" resultType="com.hui10.app.model.user.MediumHandle">
+        SELECT
+          bankno,bankname,name,status,createtime,updatetime
+        FROM
+          <include refid="winorder_medium"/>
+        WHERE
+          orderid = #{orderid}
+        ORDER BY createtime DESC
+        LIMIT 1
+    </select>
+
+    <select id="querySmallBouns" resultType="com.hui10.app.model.user.WithdrawRecord">
+        SELECT
+          payeeno,payeename,payeebank,status,remark,createtime,updatetime
+        FROM
+          <include refid="withdraw_record"/>
+        WHERE
+          orderid = #{orderid}
+        ORDER BY createtime DESC
+        LIMIT 1
+    </select>
+
+    <select id="queryWinTotalAmountByUid" resultType="java.lang.Long">
+        SELECT wintotalamount FROM <include refid="user_info"/> WHERE uid = #{uid}
+    </select>
+
+    <select id="queryGivingLotteryList" resultType="com.hui10.app.model.main.HomeLottery">
+        SELECT
+          gr.id orderid,
+          gr.lotterycode lotterytype,
+          gr.deadlinetime expiretime,
+          m.marketingname
+        FROM
+          <include refid="giving_record"/> gr
+        LEFT JOIN <include refid="marketing"/> m ON m.marketingid = gr.marketingid
+        WHERE
+          gr.uid=#{uid} AND gr.status='1'
+        ORDER BY gr.createtime DESC
+        limit #{num}
+    </select>
+    
+    <select id="queryWaitBettingNum" resultType="int">
+        SELECT
+          count(orderid)
+        FROM
+          <include refid="lottery_order"/>
+        WHERE
+          uid = #{uid}
+          AND status = '1'
+          AND lotterytime <![CDATA[ > ]]> #{sysdate}
+    </select>
+
+    <select id="queryWinPrizeNum" resultType="int">
+        SELECT
+          count(orderid)
+        FROM
+          <include refid="lottery_order"/>
+        WHERE
+          uid = #{uid}
+          AND winstatus = '2'
+          AND bonusstatus IN ('1','4','6')
+    </select>
+
+    <select id="queryWinOrderBigPrize" resultType="com.hui10.app.model.user.BigprizeHandle">
+        SELECT
+          uid,winnername,handletime,createtime
+        FROM
+          <include refid="bigprize_handle"/>
+        WHERE
+          orderid = #{orderid}
+        ORDER BY createtime DESC
+        limit 1
+    </select>
+</mapper>

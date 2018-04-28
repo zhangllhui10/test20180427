@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.order.LotteryOrderDao">
+
+    <resultMap id="BaseResultMap" type="com.hui10.app.model.order.LotteryOrder">
+        <id column="orderid" property="orderid"/>
+        <result column="stationprovince" property="stationprovince"/>
+        <result column="stationno" property="stationno"/>
+        <result column="orderamount" property="orderamount"/>
+        <result column="outtradeno" property="outtradeno"/>
+        <result column="merchantno" property="merchantno"/>
+        <result column="orderno" property="orderno"/>
+        <result column="serialno" property="serialno"/>
+        <result column="issuenumber" property="issuenumber"/>
+        <result column="gamecode" property="gamecode"/>
+        <result column="spid" property="spid"/>
+        <result column="status" property="status"/>
+        <result column="winstatus" property="winstatus"/>
+        <result column="prizelevel" property="prizelevel"/>
+        <result column="winprize" property="winprize"/>
+        <result column="bonusstatus" property="bonusstatus"/>
+        <result column="remark" property="remark"/>
+        <result column="ordertime" property="ordertime"/>
+        <result column="createdate" property="createdate"/>
+        <result column="updatedate" property="updatedate"/>
+        <result column="source" property="source"/>
+        <result column="paytime" property="paytime"/>
+        <result column="lotterytime" property="lotterytime"/>
+        <result column="channelmercid" property="channelmercid"/>
+        <result column="acquirerno" property="acquirerno"/>
+    </resultMap>
+    
+    <resultMap id="orderDetailMap" type="com.hui10.app.model.order.LotteryOrder">
+        <id column="orderid" property="orderid"/>
+        <result column="stationprovince" property="stationprovince"/>
+        <result column="stationno" property="stationno"/>
+        <result column="orderamount" property="orderamount"/>
+        <result column="outtradeno" property="outtradeno"/>
+        <result column="merchantno" property="merchantno"/>
+        <result column="merchantname" property="merchantname"/>
+        <result column="orderno" property="orderno"/>
+        <result column="serialno" property="serialno"/>
+        <result column="issuenumber" property="issuenumber"/>
+        <result column="gamecode" property="gamecode"/>
+        <result column="spid" property="spid"/>
+        <result column="status" property="status"/>
+        <result column="winstatus" property="winstatus"/>
+        <result column="prizelevel" property="prizelevel"/>
+        <result column="winprize" property="winprize"/>
+        <result column="bonusstatus" property="bonusstatus"/>
+        <result column="remark" property="remark"/>
+        <result column="ordertime" property="ordertime"/>
+        <result column="createdate" property="createdate"/>
+        <result column="updatedate" property="updatedate"/>
+        <result column="source" property="source"/>
+        <result column="paytime" property="paytime"/>
+        <result column="lotterytime" property="lotterytime"/>
+        <result column="lotterynumber" property="lotterycode"/>
+        <result column="lotterystatus" property="lotterystatus"/>
+        <collection property="orderDetails" ofType="com.hui10.app.model.order.LotteryOrderDetail" column="detail_orderid">
+        	<id column="detail_tradesn" property="tradesn"/>
+	        <result column="detail_orderid" property="orderid" />
+	        <result column="detail_orderno" property="orderno" />
+	        <result column="detail_orderamount" property="orderamount" />
+	        <result column="detail_gamecode" property="gamecode" />
+	        <result column="detail_issuenumber" property="issuenumber" />
+	        <result column="detail_ordertime" property="ordertime" />
+	        <result column="detail_lotterytime" property="lotterytime" />
+	        <result column="detail_selecttype" property="selecttype" />
+	        <result column="detail_bettype" property="bettype" />
+	        <result column="detail_multipl" property="multipl" />
+	        <result column="detail_codedetail" property="codedetail" />
+	        <result column="detail_bonus" property="bonus" />
+	        <result column="detail_createtime" property="createtime" />
+	        <result column="detail_updatetime" property="updatetime" />
+        </collection>
+    </resultMap>
+
+    <sql id="columns">
+        orderid,stationprovince,stationno,orderamount,outtradeno,merchantno,orderno,serialno,issuenumber,gamecode,spid,status,winstatus,prizelevel,winprize,bonusstatus,remark,ordertime,createdate,updatedate,source,paytime,lotterytime,channelmercid,acquirerno,userphone,ordertype,uid,betnumber
+    </sql>
+    
+    <sql id="order_detail_columns">
+    	lottery_order.orderid,lottery_order.stationprovince,lottery_order.stationno,lottery_order.orderamount,lottery_order.outtradeno,lottery_order.merchantno,lottery_order.orderno,lottery_order.serialno,lottery_order.issuenumber,lottery_order.gamecode,lottery_order.spid,lottery_order.status,lottery_order.winstatus,lottery_order.prizelevel,lottery_order.winprize,lottery_order.bonusstatus,lottery_order.remark,lottery_order.ordertime,lottery_order.createdate,lottery_order.updatedate,lottery_order.source,lottery_order.paytime,lottery_order.lotterytime,lottery_order.lotterystatus,past.lotterynumber,
+    	detail.tradesn as detail_tradesn,detail.orderid as detail_orderid,detail.orderno as detail_orderno,detail.orderamount as detail_orderamount,detail.gamecode as detail_gamecode,detail.issuenumber as detail_issuenumber,detail.ordertime as detail_ordertime,detail.lotterytime as detail_lotterytime,detail.selecttype as detail_selecttype,detail.bettype as detail_bettype,detail.multipl as detail_multipl,detail.codedetail as detail_codedetail,detail.bonus as detail_bonus,detail.createtime as detail_createtime,detail.updatetime as detail_updatetime,merchant.merchantname
+    </sql>
+    <sql id="tables">hui_app_lottery_order</sql>
+
+    <insert id="insert" parameterType="com.hui10.app.model.order.LotteryOrder">
+        INSERT INTO
+        <include refid="tables"/>
+        (<include refid="columns"/>)
+        VALUES (
+        #{orderid},#{stationprovince},#{stationno},#{orderamount},#{outtradeno},#{merchantno},#{orderno},#{serialno},#{issuenumber},#{gamecode},#{spid},#{status},#{winstatus},#{prizelevel},#{winprize},#{bonusstatus},#{remark},#{ordertime},#{createdate},#{updatedate},#{source},#{paytime},#{lotterytime},#{channelmercid},#{acquirerno},#{userphone},#{ordertype},#{uid},#{betnumber}
+        )
+    </insert>
+
+
+    <select id="queryByOrderId" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tables"/>
+        WHERE orderid=#{orderid}
+
+    </select>
+    
+    <select id="queryByOrderIdUid" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tables"/> lottery_order
+        WHERE  lottery_order.status=1 AND lottery_order.orderid=(SELECT user_order.orderid FROM hui_app_user_order user_order WHERE user_order.uid=#{uid} AND user_order.orderid=#{orderid}) 
+        
+    </select>
+
+
+    <select id="queryPreDayLotteryOrder" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tables"/>
+
+        WHERE
+          status=2
+        AND
+          DATE_FORMAT(paytime, "%Y%m%d") = #{preDate} ORDER BY orderid DESC
+    </select>
+
+
+    <update id="update" parameterType="com.hui10.app.model.order.LotteryOrder">
+
+        UPDATE
+        <include refid="tables"/>
+
+        <set>
+
+            <if test="stationprovince!=null">
+                stationprovince=#{stationprovince},
+            </if>
+
+            <if test="stationno!=null">
+                stationno=#{stationno},
+            </if>
+            <if test="stationno!=null">
+                stationno=#{stationno},
+            </if>
+
+            <if test="orderamount>0">
+                orderamount=#{orderamount},
+            </if>
+            <if test="outtradeno!=null">
+                outtradeno=#{outtradeno},
+            </if>
+
+            <if test="merchantno!=null">
+                merchantno=#{merchantno},
+            </if>
+            <if test="orderno!=null">
+                orderno=#{orderno},
+            </if>
+            <if test="serialno!=null">
+                serialno=#{serialno},
+            </if>
+
+            <if test="issuenumber!=null">
+                issuenumber=#{issuenumber},
+            </if>
+
+            <if test="ordertime!=null">
+                ordertime=#{ordertime},
+            </if>
+            <if test="gamecode!=null">
+                gamecode=#{gamecode},
+            </if>
+
+            <if test="spid!=null">
+                spid=#{spid},
+            </if>
+
+            <if test="status!=1">
+                status=#{status},
+            </if>
+
+            <if test="winstatus!=1">
+                winstatus=#{winstatus},
+            </if>
+
+            <if test="bonusstatus!=1">
+                bonusstatus=#{bonusstatus},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+
+            <if test="createdate!=null">
+                createdate=#{createdate},
+            </if>
+
+            <if test="updatedate!=null">
+                updatedate=#{updatedate},
+            </if>
+            <if test="paytime!=null">
+                paytime=#{paytime},
+            </if>
+            <if test="acquirerno!=null">
+                acquirerno=#{acquirerno},
+            </if>
+            <if test="channelmercid!=null">
+                channelmercid=#{channelmercid},
+            </if>
+            <if test="uid!=null">
+                uid=#{uid},
+            </if>
+            <if test="actualamount>0">
+                actualamount=#{actualamount},
+            </if>
+            <if test="betnumber>0">
+                betnumber=#{betnumber},
+            </if>
+            <if test="lotterytime!=null">
+                lotterytime=#{lotterytime},
+            </if>
+        </set>
+        <where>
+            orderid=#{orderid}
+        </where>
+    </update>
+    
+    <select id="queryOrders" resultMap="orderDetailMap">
+    	SELECT 
+			<include refid="order_detail_columns"/>
+    	FROM
+    	(
+			SELECT tmp_order.* FROM hui_app_lottery_order tmp_order
+			JOIN hui_app_user_order user_order ON user_order.orderid=tmp_order.orderid  and user_order.uid=#{uid}
+			<if test="orderid!=null">
+                <![CDATA[ AND  tmp_order.orderid<#{orderid}  ]]>
+            </if>
+            <if test="paystatus!=null">
+                AND  (tmp_order.status=1 OR status=3)
+            </if>
+            <if test="lotterystatus!=null">
+                AND tmp_order.lotterystatus= #{lotterystatus} AND tmp_order.status NOT IN(1,3,4)
+            </if>
+			ORDER BY tmp_order.orderid DESC LIMIT #{pagesize}
+		) AS lottery_order
+		LEFT JOIN hui_app_lottery_order_detail detail ON lottery_order.orderid = detail.orderid
+		LEFT JOIN hui_app_lottery_past past ON past.issuenumber=lottery_order.issuenumber
+		LEFT JOIN hui_app_merchant_info merchant ON merchant.merchantno=lottery_order.merchantno
+		ORDER BY lottery_order.orderid DESC,detail.tradesn  DESC
+    </select>
+
+    <update id="updateOrderStatusByPoslotNotify">
+	   update hui_app_lottery_order o, hui_app_marketing_lottery_giving_record r, hui_app_marketing m
+		  set o.issuenumber=#{issuenumber},o.status=#{status},o.updatedate=sysdate(),o.ordertime=sysdate()
+		where o.orderid = r.orderid and r.marketingid = m.marketingid 
+		  and m.resource = #{resource}
+		  and m.lotterycode = #{lotterycode}
+	</update>
+
+
+    <select id="queryOrderCountByPc" resultType="java.lang.Integer">
+
+        SELECT COUNT(*) FROM  hui_app_lottery_order WHERE status='2' AND merchantno=#{merchantno}  AND ordertype=1
+        <if test="begin !=null and end !=null">
+           AND ordertime BETWEEN #{begin} AND #{end}
+        </if>
+
+        <if test="source !=null">
+            AND source =#{source}
+        </if>
+        <if test="gamecode !=null">
+            AND gamecode =#{gamecode}
+        </if>
+    </select>
+
+    <select id="queryOrderListPc" resultType="com.hui10.app.model.order.OrderInfoDto">
+
+        SELECT ordertime,orderid orderno,outtradeno,source,gamecode,actualamount orderamount,stationno,merchantno FROM  hui_app_lottery_order WHERE status='2' AND merchantno=#{merchantno}  AND ordertype=1
+        <if test="begin !=null and end !=null">
+            AND ordertime BETWEEN #{begin} AND #{end}
+        </if>
+
+        <if test="source !=null">
+            AND source =#{source}
+        </if>
+        <if test="gamecode !=null">
+            AND gamecode =#{gamecode}
+        </if>
+        ORDER BY ordertime DESC  LIMIT #{pagestart},#{pagesize}
+    </select>
+
+    <select id="queryOrderSumAmount" resultType="java.lang.Long">
+        SELECT SUM(actualamount) FROM  hui_app_lottery_order WHERE status='2' AND merchantno=#{merchantno} AND ordertype=1
+        <if test="begin !=null and end !=null">
+            AND ordertime BETWEEN #{begin} AND #{end}
+        </if>
+
+        <if test="source !=null">
+            AND source =#{source}
+        </if>
+        <if test="gamecode !=null">
+            AND gamecode =#{gamecode}
+        </if>
+    </select>
+
+</mapper>
+
+
+

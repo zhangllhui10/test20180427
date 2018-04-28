@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hui10.app.dao.notice.SystemNoticeDao">
+
+	<!-- 系统公告信息表 -->
+	<sql id="tbname"> hui_app_system_notice </sql>
+
+	<sql id="columns">
+		id, title, content, location, status, creator, createtime, modifier, modifytime
+	</sql>
+	
+	<!-- 新增系统公告  -->
+	<insert id="addSystemNotice" parameterType="com.hui10.app.model.notice.SystemNoticeInfo">
+	   insert <include refid="tbname" />
+	   <trim prefix="(" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       id,
+	     </if>
+	     <if test="title != null">
+	       title,
+	     </if>	     
+	     <if test="content != null">
+	       content,
+	     </if>
+	     <if test="location != null">
+	       location,
+	     </if>
+	     <if test="status != null">
+	       status,
+	     </if>
+	     <if test="creator != null">
+	       creator,
+	     </if>
+	     <if test="createtime != null">
+	       createtime,
+	     </if>
+	     <if test="modifier != null">
+	       modifier,
+	     </if>
+	     <if test="modifytime != null">
+	       modifytime,
+	     </if>
+	   </trim>
+	   <trim prefix="values (" suffix=")" suffixOverrides=",">
+	     <if test="id != null">
+	       #{id,jdbcType=VARCHAR},
+	     </if>
+	     <if test="title != null">
+	       #{title,jdbcType=VARCHAR},
+	     </if>
+	     <if test="content != null">
+	       #{content,jdbcType=VARCHAR},
+	     </if>
+	     <if test="location != null">
+	       #{location,jdbcType=VARCHAR},
+	     </if>
+	     <if test="status != null">
+	       #{status,jdbcType=VARCHAR},
+	     </if>
+	     <if test="creator != null">
+	       #{creator,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtime != null">
+	       #{createtime,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="modifier != null">
+	       #{modifier,jdbcType=VARCHAR},
+	     </if>
+	     <if test="modifytime != null">
+	       #{modifytime,jdbcType=TIMESTAMP},
+	     </if>
+	   </trim>
+	</insert>
+	
+	<!-- 修改系统公告  -->
+	<update id="modifySystemNotice" parameterType="com.hui10.app.model.notice.SystemNoticeInfo">
+	   update <include refid="tbname" />
+	   	  <set>
+		     <if test="title != null">
+		       title = #{title,jdbcType=VARCHAR},
+		     </if>
+		     <if test="content != null">
+		       content = #{content,jdbcType=VARCHAR},
+		     </if>
+		     <if test="location != null">
+		       location = #{location,jdbcType=VARCHAR},
+		     </if>
+		     <if test="status != null">
+		       status = #{status,jdbcType=VARCHAR},
+		     </if>
+		     <if test="modifier != null">
+		       modifier = #{modifier,jdbcType=VARCHAR},
+		     </if>
+		     <if test="modifytime != null">
+		       modifytime = #{modifytime,jdbcType=TIMESTAMP},
+		     </if>
+		  </set>
+	   where id = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查询系统公告详情 -->
+    <select id="querySystemNoticeInfo" resultType="com.hui10.app.model.notice.SystemNoticeInfo">
+        select
+          	<include refid="columns" />
+        from
+            <include refid="tbname"/>
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+	
+	<!-- 查询系统公告总数 -->
+    <select id="querySystemNoticeCount" resultType="int">
+       select count(*)
+         from <include refid="tbname"/>
+    </select>
+    
+    <!-- 查询系统公告列表 -->
+    <select id="querySystemNoticeList" resultType="com.hui10.app.model.notice.SystemNoticeInfo">
+       select
+          	<include refid="columns" />
+         from
+            <include refid="tbname"/>
+        order by createtime desc
+        <if test="pagesize != null">
+	       limit #{startnum},#{pagesize}
+	    </if>
+    </select>
+</mapper>

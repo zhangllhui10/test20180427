@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.order.LotteryOrderDetailDao">
+
+    <resultMap id="BaseResultMap" type="com.hui10.app.model.order.LotteryOrderDetail">
+        <id column="tradesn" property="tradesn"/>
+        <result column="orderid" property="orderid" />
+        <result column="orderno" property="orderno" />
+        <result column="orderamount" property="orderamount" />
+        <result column="gamecode" property="gamecode" />
+        <result column="issuenumber" property="issuenumber" />
+        <result column="ordertime" property="ordertime" />
+        <result column="lotterytime" property="lotterytime" />
+        <result column="selecttype" property="selecttype" />
+        <result column="bettype" property="bettype" />
+        <result column="multipl" property="multipl" />
+        <result column="codedetail" property="codedetail" />
+        <result column="bonus" property="bonus" />
+        <result column="createtime" property="createtime" />
+        <result column="updatetime" property="updatetime" />
+    </resultMap>
+
+    <sql id="columns">
+      tradesn,orderid,orderno,orderamount,gamecode,issuenumber,ordertime,lotterytime,selecttype,bettype,multipl,codedetail,bonus,createtime,updatetime
+    </sql>
+    <sql id="tables">hui_app_lottery_order_detail</sql>
+
+
+    <insert id="insert" parameterType="com.hui10.app.model.order.LotteryOrderDetail">
+
+        INSERT INTO
+              <include refid="tables" /> (<include refid="columns" />)
+        VALUES
+        (
+          #{tradesn},#{orderid},#{orderno},#{orderamount},#{gamecode},#{issuenumber},#{ordertime},#{lotterytime},#{selecttype},#{bettype},#{multipl},#{codedetail},#{bonus},#{bonusstatus},#{createtime},#{updatetime}
+        )
+
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List">
+
+        INSERT INTO  <include refid="tables" /> (<include refid="columns" />) VALUES
+
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.tradesn},#{item.orderid},#{item.orderno},#{item.orderamount},#{item.gamecode},#{item.issuenumber},#{item.ordertime},#{item.lotterytime},#{item.selecttype},#{item.bettype},#{item.multipl},#{item.codedetail},#{item.bonus},#{item.createtime},#{item.updatetime}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="updateOrderNoByOrderId" parameterType="com.hui10.app.model.order.LotteryOrderDetail">
+        UPDATE  <include refid="tables" /> SET orderno=#{orderno},ordertime=#{ordertime} ,updatetime=#{updatetime}
+        <where>
+            orderid=#{orderid}
+        </where>
+    </update>
+
+
+    <select id="queryOrderDetailByOrderId" resultMap="BaseResultMap">
+
+        SELECT <include refid="columns" /> FROM  <include refid="tables" /> WHERE   orderid=#{orderid}
+
+    </select>
+
+    <select id="getLotteryOrderDetailCount"  resultType="int">
+        SELECT COUNT(*) FROM <include refid="tables" /> WHERE orderid=#{orderid}
+    </select>
+
+    <update id="updateOrderDetailForBatch" parameterType="com.hui10.app.model.order.LotteryOrderDetail">
+        <foreach collection="list" item="obj" separator=";">
+            UPDATE <include refid="tables" /> SET ordertime=#{obj.ordertime},updatetime=#{obj.updatetime},status=#{obj.status}
+            WHERE tradesn=#{obj.tradesn}
+        </foreach>
+    </update>
+</mapper>

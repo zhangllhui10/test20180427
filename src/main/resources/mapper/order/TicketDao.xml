@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.order.TicketDao">
+
+    <!-- 出票信息表 -->
+    <sql id="lottery_ticket"> hui_app_lottery_ticket </sql>
+
+    <insert id="batchInsertTicket" parameterType="com.hui10.app.model.order.Ticket">
+      INSERT INTO <include refid="lottery_ticket"/> VALUES
+      <foreach collection="list" item="obj" separator="," >
+        (
+        #{obj.ticketid},#{obj.orderid},#{obj.orderno},#{obj.ordertype},#{obj.uid},#{obj.lotterycode},#{obj.issueno},#{obj.bettype},
+        #{obj.betdetail},#{obj.multiple},#{obj.betnumber},#{obj.amount},#{obj.betmachineid},#{obj.bettime},#{obj.tickettime},#{obj.provinceid},
+        #{obj.status},#{obj.errorcode},#{obj.prizetime},#{obj.prizedeadline},#{obj.sendprize},#{obj.winprize},#{obj.ticketkey},#{obj.sendstatus},
+        #{obj.stationcode},#{obj.betcitycode},#{obj.pointcardno},#{obj.mobile},#{obj.drawway},#{obj.machineruncode},#{obj.ordersource},#{obj.buid}
+        )
+    </foreach>
+    </insert>
+</mapper>
+
+
+

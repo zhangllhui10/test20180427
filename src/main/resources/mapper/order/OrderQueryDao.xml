@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hui10.app.dao.order.OrderQueryDao">
+
+    <!-- 开奖信息表 -->
+    <sql id="lottery_past"> hui_app_lottery_past </sql>
+    <!-- 订单表 -->
+    <sql id="lottery_order"> hui_app_lottery_order </sql>
+    <!-- 出票信息表 -->
+    <sql id="lottery_ticket"> hui_app_lottery_ticket </sql>
+    <!-- 中等奖中奖表 -->
+    <sql id="winorder_medium"> hui_app_user_winorder_medium_handle </sql>
+    <!-- 小奖提现记录表 -->
+    <sql id="withdraw_record"> hui_app_user_withdraw_record </sql>
+    <!-- 渠道商户信息表 -->
+    <sql id="merchant_info"> hui_app_merchant_info </sql>
+
+
+    <select id="queryRecentLotteryInfo" resultType="com.hui10.app.model.lottery.LotteryPast">
+        SELECT
+          issuenumber,lotterytime,lotteryendtime,lotterynumber,lotterytype,moneypool,createtime
+        FROM
+          <include refid="lottery_past"/>
+        WHERE
+          lotterytype = #{lotterytype}
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <select id="queryOrderList" resultType="com.hui10.app.model.main.HomeLottery">
+        SELECT
+            lo.orderid,lo.gamecode lotterytype,lo.issuenumber,lo.status,lo.remark,lo.lotterytime,lo.remark,lo.prizelevel,
+            lo.betnumber,lo.winprize,lo.lotterytime opentime,lo.lotterystatus,lo.winstatus,lo.bonusstatus,lo.ordertime,lo.ordertype
+        FROM
+         <include refid="lottery_order"/> lo
+        WHERE lo.uid = #{uid}
+		  AND lo.ordertype = '1' 
+        <if test="null != orderid and '' != orderid">
+            AND lo.orderid <![CDATA[ < ]]> #{orderid}
+        </if>
+
+        <!-- 已投订单-->
+        <if test=' type == "1" '>
+            AND lo.status = '2'
+            GROUP BY lo.orderid
+            ORDER BY lo.orderid DESC
+        </if>
+        <!-- 待投订单-->
+        <if test=' type == "2" '>
+            AND lo.status = '1' AND lo.lotterytime <![CDATA[ > ]]> #{sysdate}
+            GROUP BY lo.orderid
+            ORDER BY lo.orderid DESC
+        </if>
+        <!-- 过期订单-->
+        <if test=' type == "3" '> 
+            AND lo.status = '1' AND lo.lotterytime <![CDATA[ < ]]> #{sysdate}
+            GROUP BY lo.orderid
+            ORDER BY lo.orderid DESC
+        </if>
+        <!-- 中奖订单-->
+        <if test=' type == "4" '>
+            AND lo.winstatus = '2'
+            GROUP BY lo.orderid
+            ORDER BY lo.orderid DESC
+        </if>
+
+        LIMIT 10
+    </select>
+
+    <select id="queryOrderInfoByOrderId" resultType="com.hui10.app.model.order.LotteryOrder">
+        SELECT
+            lo.orderid,lo.gamecode,lo.issuenumber,lo.status,lo.remark,lo.lotterytime,lo.ordertype,lo.stationno,lo.source,mi.merchantname,lo.uid,lo.prizelevel,
+            lo.betnumber,lo.winprize,lo.lotterytime opentime,lo.lotterystatus,lo.winstatus,lo.bonusstatus,lo.paytime,lo.winprize,lo.sendprize,lo.orderno
+        FROM
+          <include refid="lottery_order"/> lo
+        LEFT JOIN <include refid="merchant_info"/> mi ON mi.merchantno = lo.merchantno
+        WHERE
+          lo.orderid=#{orderid}
+    </select>
+
+    <select id="queryTicketListByOrderId" resultType="com.hui10.app.model.order.Ticket">
+        SELECT
+        betdetail,status,multiple
+        FROM
+          <include refid="lottery_ticket"/>
+        WHERE
+          orderno = #{orderid}
+    </select>
+
+    <select id="queryWaitPayOrderId" resultType="java.lang.String">
+        SELECT
+          orderid
+        FROM
+          <include refid="lottery_order"/>
+        WHERE
+          uid = #{uid}
+        AND status = '1'
+        AND lotterytime <![CDATA[ > ]]> SYSDATE()
+        AND (orderid <![CDATA[ > ]]> #{orderid} OR orderid <![CDATA[ < ]]> #{orderid})
+        ORDER BY orderid DESC
+        limit 1
+    </select>
+</mapper>
+
+
+
+
